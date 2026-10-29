@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>The Lisbon & Porto Playbook 2026 - 포르투갈·스페인 맞춤 가이드</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts (Inter & Noto Sans KR) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+          },
+          colors: {
+            azulejo: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            },
+            tram: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            },
+            port: {
+              700: '#881337',
+              800: '#701a35',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbars and animations */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .safe-bottom {
+      padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 68px);
+    }
+    .tap-highlight-transparent {
+      -webkit-tap-highlight-color: transparent;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    .pulse-glow {
+      animation: pulseGlow 2.5s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased select-none font-sans min-h-screen">
+
+  <!-- Mobile Frame Container (Optimal on mobile, centered card layout on desktop) -->
+  <div class="max-w-md mx-auto min-h-screen bg-slate-50 flex flex-col shadow-2xl relative border-x border-slate-200">
+    
+    <!-- Top Status / Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 rounded-lg bg-azulejo-700 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+          PT
+        </div>
+        <div>
+          <h1 class="text-sm font-bold text-slate-900 leading-tight flex items-center gap-1.5">
+            Lisbon & Porto 2026
+            <span class="text-[10px] bg-amber-100 text-amber-800 font-semibold px-1.5 py-0.5 rounded-full border border-amber-300">Playbook</span>
+          </h1>
+          <p class="text-[11px] text-slate-500 font-medium">12박 13일 맞춤 도슨트 & 생존 치트키</p>
+        </div>
+      </div>
+
+      <!-- Quick Action: Exchange Rate & Search modal toggles -->
+      <div class="flex items-center space-x-1">
+        <button onclick="openCalcModal()" class="p-2 rounded-full hover:bg-slate-100 active:scale-95 transition text-slate-600 tap-highlight-transparent" title="환율 계산기">
+          <svg class="w-5 h-5 text-azulejo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </button>
+        <button onclick="toggleQuickSearch()" class="p-2 rounded-full hover:bg-slate-100 active:scale-95 transition text-slate-600 tap-highlight-transparent" title="빠른 검색">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Search Overlay Box (Expandable) -->
+    <div id="quickSearchBox" class="hidden bg-slate-900/90 backdrop-blur-md px-4 py-3 border-b border-slate-700 z-30 transition-all">
+      <div class="relative">
+        <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="명소, 교통, 맛집 검색 (예: 28번, 테일러, 파두, 환승)" class="w-full bg-slate-800 text-white placeholder-slate-400 text-xs rounded-xl py-2 pl-9 pr-8 focus:outline-none focus:ring-2 focus:ring-amber-400 border border-slate-700">
+        <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <button onclick="clearSearch()" class="absolute right-2.5 top-2 text-slate-400 hover:text-white text-xs p-0.5">✕</button>
+      </div>
+      <div id="searchResults" class="mt-2 text-xs space-y-1.5 max-h-48 overflow-y-auto"></div>
+    </div>
+
+    <!-- MAIN SCROLLABLE CONTENT AREA -->
+    <main class="flex-1 overflow-y-auto safe-bottom px-3.5 py-4 space-y-5" id="mainContent">
+      
+      <!-- TAB 1: 🌟 QUICK CHEAT SHEET (Home) -->
+      <section id="tab-home" class="tab-panel space-y-4">
+        
+        <!-- Hero Visual Banner -->
+        <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-azulejo-900 via-azulejo-700 to-amber-600 text-white p-4 shadow-lg">
+          <div class="absolute -right-4 -bottom-4 w-28 h-28 opacity-20 bg-white rounded-full"></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-bold tracking-wider uppercase text-amber-300 bg-black/30 px-2 py-0.5 rounded-md">2026 Live Edition</span>
+              <span class="text-[11px] text-slate-200">리스본·포르투·세비야</span>
+            </div>
+            <h2 class="text-xl font-extrabold tracking-tight mt-1">리스본&포르투 완벽 치트키</h2>
+            <p class="text-xs text-slate-100 mt-1 opacity-90 leading-relaxed">
+              도보 언덕길, 트램 치트키, 안전 경보, 테일러 와인, 심야 야경까지 한 손에 담았습니다.
+            </p>
+
+            <div class="grid grid-cols-3 gap-2 mt-3.5 pt-3 border-t border-white/20 text-center">
+              <div class="bg-white/10 backdrop-blur-sm rounded-xl py-1.5 px-1">
+                <span class="block text-[10px] text-slate-200">리스본 거점</span>
+                <span class="text-xs font-bold text-amber-300">로시우 플라자</span>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-xl py-1.5 px-1">
+                <span class="block text-[10px] text-slate-200">포르투 거점</span>
+                <span class="text-xs font-bold text-amber-300">상벤투 에어비앤비</span>
+              </div>
+              <div class="bg-white/10 backdrop-blur-sm rounded-xl py-1.5 px-1">
+                <span class="block text-[10px] text-slate-200">세비야 거점</span>
+                <span class="text-xs font-bold text-amber-300">소호 부티크</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency & Critical Alerts Grid -->
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+              현장 필수 주의 경보 & 꿀팁
+            </h3>
+            <span class="text-[10px] text-slate-500 font-medium">탭하여 펼치기</span>
+          </div>
+
+          <!-- Alert 1: Pickpocket (Interactive visual trigger) -->
+          <div class="bg-white border border-rose-200 rounded-xl p-3 shadow-sm hover:border-rose-400 transition cursor-pointer" onclick="toggleCard('card-pickpocket')">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-base">
+                  🚨
+                </div>
+                <div>
+                  <h4 class="text-xs font-bold text-slate-900">소매치기 경보: 28번 트램 & 로시우</h4>
+                  <p class="text-[11px] text-rose-600 font-medium">백팩 앞으로 메기 & 손목 스트랩 필수</p>
+                </div>
+              </div>
+              <span id="card-pickpocket-arrow" class="text-slate-400 text-xs">▼</span>
+            </div>
+            <div id="card-pickpocket" class="hidden mt-3 pt-2.5 border-t border-slate-100 text-xs text-slate-600 space-y-1.5 bg-rose-50/50 p-2.5 rounded-lg">
+              <p>• <strong>위험 지역:</strong> 28번 트램 내부(인파 몰림), 로시우 광장, 아우구스타 거리, 에두아르두 7세 공원 주변.</p>
+              <p>• <strong>행동 수칙:</strong> 스마트폰은 손목 스트랩에 걸고, 백팩은 무조건 가슴 앞쪽으로 메세요. 뒷주머니 지갑 절대 금지!</p>
+              <p>• <strong>슬링백 추천:</strong> 여권과 고액 현금은 숙소 금고에 분산 보관하고 외출 시 슬링백을 전면에 고정하세요.</p>
+            </div>
+          </div>
+
+          <!-- Alert 2: Airport Uber Kiss & Fly -->
+          <div class="bg-white border border-blue-200 rounded-xl p-3 shadow-sm hover:border-blue-400 transition cursor-pointer" onclick="toggleCard('card-uber')">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-lg bg-blue-100 text-azulejo-600 flex items-center justify-center font-bold text-base">
+                  ✈️
+                </div>
+                <div>
+                  <h4 class="text-xs font-bold text-slate-900">리스본 공항 우버 탑승 위치 (필독)</h4>
+                  <p class="text-[11px] text-azulejo-600 font-medium">1층 입국장 탑승 불가 ➔ 2층 출국장 'Kiss & Fly'</p>
+                </div>
+              </div>
+              <span id="card-uber-arrow" class="text-slate-400 text-xs">▼</span>
+            </div>
+            <div id="card-uber" class="hidden mt-3 pt-2.5 border-t border-slate-100 text-xs text-slate-600 space-y-1.5 bg-blue-50/50 p-2.5 rounded-lg">
+              <p>• <strong>이유:</strong> 1층 도착층에는 택시/우버 일반 픽업이 금지되어 기사님이 취소할 수 있습니다.</p>
+              <p>• <strong>이동 경로:</strong> 짐을 찾고 에스컬레이터를 타고 <strong>2층 출국장(Departures)</strong> 외부 <strong>'Kiss & Fly' 구역</strong>으로 이동 후 호출하세요.</p>
+              <p>• <strong>요금/시간:</strong> 시내(로시우)까지 약 10~15유로, 20~30분 소요 (2인 이상이거나 짐 많을 때 강력 추천).</p>
+            </div>
+          </div>
+
+          <!-- Alert 3: AP Train Free Transfer -->
+          <div class="bg-white border border-amber-200 rounded-xl p-3 shadow-sm hover:border-amber-400 transition cursor-pointer" onclick="toggleCard('card-train')">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-base">
+                  🚆
+                </div>
+                <div>
+                  <h4 class="text-xs font-bold text-slate-900">11/11 AP 133 열차 & 상벤투 무료 환승</h4>
+                  <p class="text-[11px] text-amber-700 font-medium">캄파냐역 ➔ 상벤투역 로컬열차 공짜 탑승 요령</p>
+                </div>
+              </div>
+              <span id="card-train-arrow" class="text-slate-400 text-xs">▼</span>
+            </div>
+            <div id="card-train" class="hidden mt-3 pt-2.5 border-t border-slate-100 text-xs text-slate-600 space-y-1.5 bg-amber-50/50 p-2.5 rounded-lg">
+              <p>• <strong>기차 편명:</strong> AP 133 (14:00 리스본 출발 ➔ 16:48 포르투 캄파냐 도착, 1등석 C1 L11, L12).</p>
+              <p>• <strong>무료 환승 꿀팁:</strong> AP 티켓 소지자는 캄파냐(Campanhã)역에서 상벤투(São Bento)역 행 도시간 열차(Urbanos)를 <strong>추가 발권 없이 무료 환승</strong> 가능합니다!</p>
+              <p>• <strong>환승법:</strong> 전광판(Painel de Partidas)에서 상벤투행 플랫폼(Linha) 확인 후 바로 탑승 (10~15분 간격 운행).</p>
+            </div>
+          </div>
+
+          <!-- Alert 4: Weather & Shoes -->
+          <div class="bg-white border border-emerald-200 rounded-xl p-3 shadow-sm hover:border-emerald-400 transition cursor-pointer" onclick="toggleCard('card-weather')">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-base">
+                  👟
+                </div>
+                <div>
+                  <h4 class="text-xs font-bold text-slate-900">날씨 & 옷차림 & 칼사다(바닥돌) 대비</h4>
+                  <p class="text-[11px] text-emerald-700 font-medium">무조건 편한 운동화 + 실내 난방 약함 대비</p>
+                </div>
+              </div>
+              <span id="card-weather-arrow" class="text-slate-400 text-xs">▼</span>
+            </div>
+            <div id="card-weather" class="hidden mt-3 pt-2.5 border-t border-slate-100 text-xs text-slate-600 space-y-1.5 bg-emerald-50/50 p-2.5 rounded-lg">
+              <p>• <strong>신발:</strong> 리스본과 포르투는 언덕이 많고 미끄러운 대리석 자갈길(칼사다 포르투기사)입니다. 굽 있는 신발 절대 지양, 접지력 좋은 운동화 필수.</p>
+              <p>• <strong>숙소 난방:</strong> 유럽 건물 특성상 난방(라디에이터)이 약할 수 있으므로 따뜻한 수면 잠옷과 가벼운 경량 패딩 레이어드 필수입니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick 4-Step Screenshot Summary Card (From Playbook Page 15) -->
+        <div class="bg-slate-900 text-white rounded-2xl p-4 shadow-lg border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+              📸 캡처해서 보관하는 핵심 요약 (Screenshot Card)
+            </span>
+            <span class="text-[10px] text-slate-400">오프라인 대비</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+              <div class="font-bold text-rose-400 mb-0.5">🚨 소매치기 1순위</div>
+              <p class="text-[11px] text-slate-300">28번 트램 & 로시우 광장 (백팩은 가슴 앞, 폰 스트랩)</p>
+            </div>
+            <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+              <div class="font-bold text-sky-400 mb-0.5">🎫 교통 치트키</div>
+              <p class="text-[11px] text-slate-300">나베간테 카드 (728, 714, 737 버스 적극 활용)</p>
+            </div>
+            <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+              <div class="font-bold text-amber-400 mb-0.5">🥐 1일 1미식</div>
+              <p class="text-[11px] text-slate-300">에그타르트(나타) + 바칼라우 + 포트와인</p>
+            </div>
+            <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+              <div class="font-bold text-purple-400 mb-0.5">✨ 야경 원픽</div>
+              <p class="text-[11px] text-slate-300">세뇨라 두 몬트 전망대 & 미라도루 다 그라사</p>
+            </div>
+          </div>
+          <div class="text-[10px] text-slate-400 text-center pt-1 italic">
+            "Boa Viagem! (즐거운 여행 되세요)"
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TAB 2: 🗓️ 12박 13일 맞춤 일정 (Itinerary) -->
+      <section id="tab-itinerary" class="tab-panel hidden space-y-4">
+        
+        <!-- Segment Filter (Lisbon / Porto / Seville) -->
+        <div class="flex p-1 bg-slate-200 rounded-xl text-xs font-semibold">
+          <button onclick="filterItinerary('all')" id="btn-itin-all" class="flex-1 py-1.5 rounded-lg bg-white shadow-sm text-slate-900 transition">전체 13일</button>
+          <button onclick="filterItinerary('lisbon')" id="btn-itin-lisbon" class="flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">리스본(3박)</button>
+          <button onclick="filterItinerary('porto')" id="btn-itin-porto" class="flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">포르투(6박)</button>
+          <button onclick="filterItinerary('seville')" id="btn-itin-seville" class="flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">세비야(3박)</button>
+        </div>
+
+        <!-- 2-Day Playbook Express vs 13-Day Toggle Note -->
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-xs text-amber-800 flex items-start space-x-2">
+          <span class="text-base">💡</span>
+          <div>
+            <strong>리스본 2일 압축 코스</strong>(바이샤·알파마 ➔ 벨렝·타구스강)와 <strong>12박 13일 도슨트 전체 일정</strong>이 연계되어 있습니다. 각 일차를 탭하면 상세 동선과 도슨트 해설이 펼쳐집니다.
+          </div>
+        </div>
+
+        <!-- Timeline Container -->
+        <div class="space-y-3" id="timelineList">
+          <!-- Dynamic or Static items will be shown here -->
+        </div>
+
+      </section>
+
+      <!-- TAB 3: 🏛️ 도시별 도슨트 가이드 (Docent Guides) -->
+      <section id="tab-docent" class="tab-panel hidden space-y-4">
+        
+        <!-- City Sub-tabs -->
+        <div class="flex border-b border-slate-200 text-xs font-bold text-slate-600">
+          <button onclick="switchDocentCity('lisbon')" id="doc-tab-lisbon" class="py-2 px-3 border-b-2 border-azulejo-600 text-azulejo-600 flex-1 text-center">리스본 야경·문화 (8선)</button>
+          <button onclick="switchDocentCity('porto')" id="doc-tab-porto" class="py-2 px-3 border-b-2 border-transparent text-slate-500 hover:text-slate-900 flex-1 text-center">포르투 스냅·와이너리</button>
+          <button onclick="switchDocentCity('seville')" id="doc-tab-seville" class="py-2 px-3 border-b-2 border-transparent text-slate-500 hover:text-slate-900 flex-1 text-center">세비야 대성당·플라멩코</button>
+        </div>
+
+        <!-- DOCENT: LISBON -->
+        <div id="docent-content-lisbon" class="space-y-3">
+          <div class="text-[11px] text-slate-500 font-medium flex items-center justify-between">
+            <span>Trip.Best 평점 기반 최고의 야경 & 명소</span>
+            <span class="text-azulejo-600 font-bold">총 8곳 수록</span>
+          </div>
+
+          <!-- Spot 1: Alfama -->
+          <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-2">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-bold text-slate-900">1. 알파마 (Alfama)</h4>
+                <p class="text-[11px] text-slate-500">포르타스 두 솔(태양의 문) 전망대 & 파두 미로 골목</p>
+              </div>
+              <div class="text-right">
+                <span class="text-xs font-extrabold text-amber-500">★ 4.6</span>
+                <span class="text-[10px] block text-emerald-600 font-semibold">입장 무료</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <strong>도슨트 해설:</strong> 1755년 리스본 대지진 속에서도 기적적으로 살아남은 리스본 최고(最古)의 아랍풍 골목입니다. 대항해 시대 바다로 떠난 이들을 그리워하는 민중의 한과 정서인 <strong>'사우다드(Saudade)'</strong>에서 탄생한 파두(Fado) 선율이 골목 선술집마다 울려 퍼집니다. 태양의 문(Portas do Sol)에서 바라보는 붉은 지붕 야경과 타구스강의 반사는 리스본 낭만의 정점입니다.
+            </p>
+          </div>
+
+          <!-- Spot 2: Avenida da Liberdade -->
+          <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-2">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-bold text-slate-900">2. 리베르다드 거리 (Avenida da Liberdade)</h4>
+                <p class="text-[11px] text-slate-500">파리 샹젤리제 모티브, 럭셔리 부티크 & 라이트 아트</p>
+              </div>
+              <div class="text-right">
+                <span class="text-xs font-extrabold text-amber-500">★ 4.3</span>
+                <span class="text-[10px] block text-emerald-600 font-semibold">입장 무료</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <strong>도슨트 해설:</strong> 퐁발 후작 광장부터 바이샤로 이어지는 리스본의 대표적 낭만 대로입니다. 정교한 포르투갈식 돌바닥 자갈길(칼사다)과 울창한 가로수, 화려한 상점가 조명이 어우러집니다. 특히 연말/크리스마스 시즌에는 화려한 라이트 아트와 야간 다이닝 거리로 변모합니다.
+            </p>
+          </div>
+
+          <!-- Spot 3: Praca do Comercio -->
+          <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-2">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-bold text-slate-900">3. 코메르시우 광장 (Praça do Comércio)</h4>
+                <p class="text-[11px] text-slate-500">타구스 강변의 장엄한 관문 & 돈 호세 1세 기마상</p>
+              </div>
+              <div class="text-right">
+                <span class="text-xs font-extrabold text-amber-500">★ 4.8</span>
+                <span class="text-[10px] block text-emerald-600 font-semibold">입장 무료</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <strong>도슨트 해설:</strong> 과거 마누엘 1세의 리베이라 궁전이 있던 자리이자 신대륙 무역선이 입항하던 대항해 시대의 관문입니다. ㄷ자형 대형 노란 아케이드 건물과 중앙 기마상, 밤이 되면 켜지는 따스한 조명이 웅장합니다. 축제 시즌에는 건물 외벽에 무안경 3D 프로젝션 맵핑 쇼가 열립니다.
+            </p>
+          </div>
+
+          <!-- Spot 4 & 5: Viewpoints (Senhora do Monte & Graca) -->
+          <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-2">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-bold text-slate-900">4. 세뇨라 두 몬트 & 미라도루 다 그라사</h4>
+                <p class="text-[11px] text-slate-500">일곱 개 언덕 파노라마 & 와인 한 잔의 일몰</p>
+              </div>
+              <div class="text-right">
+                <span class="text-xs font-extrabold text-amber-500">★ 4.4</span>
+                <span class="text-[10px] block text-azulejo-600 font-semibold">일몰 1픽</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <strong>도슨트 해설:</strong> 리스본 최고봉에 위치한 <strong>세뇨라 두 몬트</strong>는 도시 전체와 상조르즈 성, 4월 25일 다리를 한눈에 조망하는 일몰 성지입니다. 인근 <strong>미라도루 다 그라사</strong>는 야외 키오스크 테라스에서 포르투갈 와인을 손에 들고 거리 버스킹 기타 연주를 들으며 황금빛 노을을 즐기기에 최고입니다.
+            </p>
+          </div>
+
+          <!-- Spot 6, 7, 8 in Compact Card -->
+          <div class="grid grid-cols-1 gap-2 text-xs">
+            <div class="bg-white p-3 rounded-xl border border-slate-200">
+              <span class="font-bold text-slate-900">5. 4월 25일 다리 & 크리스토 헤이</span>
+              <p class="text-[11px] text-slate-500 mt-0.5">샌프란시스코 금문교를 닮은 붉은 현수교. 1974년 카네이션 민주화 혁명을 기념. 야간에 강물에 붉은빛이 비치며 장관을 이룹니다.</p>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-200">
+              <span class="font-bold text-slate-900">6. Fado in Chiado 공연</span>
+              <p class="text-[11px] text-slate-500 mt-0.5">시아두 지구에서 열리는 정통 라이브 파두 공연(평점 4.3, 약 3.4만원대). 알파마 골목 선술집 파두와 또 다른 밀도 높은 감동.</p>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-200">
+              <span class="font-bold text-slate-900">7. 에스트렐라 공원 (Jardim da Estrela)</span>
+              <p class="text-[11px] text-slate-500 mt-0.5">평점 5.0 만점! 고목 아래 여유로운 밤 산책과 맞은편 에스트렐라 바실리카 성당 라이트 쇼가 일품입니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- DOCENT: PORTO -->
+        <div id="docent-content-porto" class="hidden space-y-3">
+          
+          <!-- Special 1: Porto 5 Snap Spots -->
+          <div class="bg-gradient-to-r from-blue-900 to-azulejo-700 text-white p-3.5 rounded-2xl shadow-md">
+            <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wide">📸 특집 1: 포르투 감성 스냅 5대 명소</h4>
+            <p class="text-xs mt-1 text-slate-100 opacity-90 leading-relaxed">
+              <strong>추천 시간:</strong> 고요한 오전 10~11시 or 도시가 주황빛으로 타오르는 <strong>일몰 골든아워</strong><br>
+              <strong>의상 팁:</strong> 푸른 아줄레주와 붉은 지붕 속에서 인물이 돋보이는 <strong>화이트, 베이지 단색 계열</strong> 베스트!
+            </p>
+            <div class="mt-2.5 grid grid-cols-2 gap-1.5 text-[11px]">
+              <div class="bg-white/10 p-2 rounded-lg">1. <strong>상벤투역:</strong> 2만장 아줄레주 타일 벽화</div>
+              <div class="bg-white/10 p-2 rounded-lg">2. <strong>동 루이스 1세 다리:</strong> 상층부 난간 뷰</div>
+              <div class="bg-white/10 p-2 rounded-lg">3. <strong>히베이라 강변:</strong> 파스텔톤 빨래 걸린 골목</div>
+              <div class="bg-white/10 p-2 rounded-lg">4. <strong>알마스 예배당:</strong> 외벽 파란 타일 배경</div>
+              <div class="col-span-2 bg-white/15 p-2 rounded-lg text-center">5. <strong>모루 정원 (Jardim do Morro):</strong> 가이아 언덕 잔디밭 일몰</div>
+            </div>
+          </div>
+
+          <!-- Special 2: Taylor's Winery Deep Dive -->
+          <div class="bg-white rounded-xl p-3.5 border border-purple-200 shadow-sm space-y-2">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-bold">와이너리 집중 분석</span>
+                <h4 class="text-sm font-bold text-slate-900 mt-1">테일러 와이너리 (Taylor's Port Cellars)</h4>
+              </div>
+              <span class="text-xs font-bold text-port-700 bg-rose-50 px-2 py-1 rounded-lg border border-rose-200">1인 20유로</span>
+            </div>
+            
+            <p class="text-xs text-slate-600 leading-relaxed bg-purple-50/50 p-2.5 rounded-lg border border-purple-100">
+              <strong>왜 테일러인가?</strong> 그라함(Graham's)은 위치가 멀고 30유로대이며, 샌드맨/WOW는 한국어 오디오가 지원되지 않는 경우가 많습니다. 반면 테일러는 <strong>수화기형 한국어 오디오 가이드</strong>를 완벽 지원하며, 가이아 언덕 정상에 위치해 구시가지 전경이 환상적입니다.
+            </p>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="border border-slate-200 p-2 rounded-lg">
+                <span class="font-bold text-slate-800">🍷 와인 3종 시음</span>
+                <p class="text-[11px] text-slate-500 mt-0.5">루비(Ruby), 칩 드라이, 레이트 바틀드 빈티지 등 3종 시음 제공 (<strong>4유로 올리브 안주</strong> 추가 강력 추천!).</p>
+              </div>
+              <div class="border border-slate-200 p-2 rounded-lg">
+                <span class="font-bold text-slate-800">📸 셀피 머신 & 생빈</span>
+                <p class="text-[11px] text-slate-500 mt-0.5">오크통 셀피 머신(사진 무료 이메일 전송), 본인 출생연도 와인인 <strong>'생빈(생일 빈티지)'</strong> 구매 가능.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Other Porto Attractions -->
+          <div class="space-y-2 text-xs">
+            <div class="bg-white p-3 rounded-xl border border-slate-200">
+              <div class="flex justify-between items-center mb-1">
+                <strong class="text-slate-900">클레리구스 타워 & '스피리투스' 조명 쇼</strong>
+                <span class="text-[10px] text-amber-600 font-bold">사전예약 필수</span>
+              </div>
+              <p class="text-[11px] text-slate-600 leading-relaxed">
+                이탈리아 바로크 거장 니콜라우 나소니가 설계한 75m 종탑. 밤에는 교회 내부 석조 벽면을 활용한 입체 미디어아트 <strong>스피리투스(Spiritus, 약 1.7만원)</strong> 쇼가 열려 환상적인 몰입감을 선사합니다.
+              </p>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-slate-200">
+              <div class="flex justify-between items-center mb-1">
+                <strong class="text-slate-900">팔라시오 다 볼사 (Palácio da Bolsa)</strong>
+                <span class="text-[10px] text-slate-500 font-bold">19세기 증권거래소</span>
+              </div>
+              <p class="text-[11px] text-slate-600 leading-relaxed">
+                알함브라 궁전에서 영감을 받아 순금과 화려한 무어 양식으로 수놓은 <strong>'아라비아의 방(Arab Room)'</strong>은 19세기 포르투의 막강한 부와 장인정신의 절정입니다.
+              </p>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-slate-200">
+              <div class="flex justify-between items-center mb-1">
+                <strong class="text-slate-900">브라가 & 기마랑이스 근교 일일 투어</strong>
+                <span class="text-[10px] text-purple-600 font-bold">역사의 요람</span>
+              </div>
+              <p class="text-[11px] text-slate-600 leading-relaxed">
+                '포르투갈의 로마' 브라가의 지그재그 바로크 계단 <strong>봉 제주스 성당</strong>과, 포르투갈 건국 초대 왕 아폰수 엔리케스가 탄생한 <strong>기마랑이스 성</strong> 탐방 (이어폰 지참 필수).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- DOCENT: SEVILLE -->
+        <div id="docent-content-seville" class="hidden space-y-3">
+          
+          <!-- Seville Base Hotel Info -->
+          <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs text-amber-900">
+            <strong>🏨 거점 숙소: 소호 부티크 카테드랄 (Soho Boutique Catedrál)</strong><br>
+            세비야 대성당과 도보 1~2분(100m) 거리! 대성당 야경 산책 후 바로 복귀 가능한 안달루시아 최고의 입지.
+          </div>
+
+          <!-- Spot 1: Seville Cathedral & Columbus -->
+          <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-2">
+            <h4 class="text-sm font-bold text-slate-900">1. 세비야 대성당 & 콜럼버스의 묘</h4>
+            <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <strong>도슨트 해설:</strong> 바티칸 성 베드로, 런던 세인트 폴에 이어 세계에서 세 번째로 크며, <strong>고딕 양식으로는 세계 최대 규모</strong>입니다. "후세 사람들이 우리를 미쳤다고 할 만큼 웅장하게 짓자"며 1401년 이슬람 모스크 터에 세워졌습니다. 대성당 내부에는 스페인 옛 4대 왕국(카스티야, 레온, 아라곤, 나바라)의 왕 조각상이 짊어지고 있는 <strong>크리스토퍼 콜럼버스의 관</strong>이 안치되어 있습니다.
+            </p>
+          </div>
+
+          <!-- Spot 2: Giralda Tower (35 Ramps) -->
+          <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-2">
+            <h4 class="text-sm font-bold text-slate-900">2. 히랄다 탑 (Giralda) - 35개 경사로의 비밀</h4>
+            <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <strong>도슨트 해설:</strong> 12세기 모스크의 첨탑(미나렛)을 개조한 종탑으로, 무데하르 양식과 가톨릭 고딕 양식의 공존을 보여줍니다. 계단이 아닌 <strong>35개의 완만한 경사로(Ramp)</strong>로 설계되었는데, 과거 이슬람 술탄이 말을 타고 탑 꼭대기까지 올라가 기도 시간을 알렸던 역사적 흔적입니다. 정상에 서면 오렌지 중정과 세비야 시내가 360도로 펼쳐집니다.
+            </p>
+          </div>
+
+          <!-- Spot 3: Plaza de Espana -->
+          <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-2">
+            <h4 class="text-sm font-bold text-slate-900">3. 스페인 광장 (Plaza de España)</h4>
+            <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <strong>도슨트 해설:</strong> 1929년 이베로-아메리칸 박람회를 위해 지어진 네오 무데하르 양식의 걸작입니다. 반원형 건물 아래에는 <strong>스페인 48개 주(Province)의 역사적 사건</strong>을 정교한 아줄레주 타일 그림으로 표현한 벤치가 설치되어 있어 본인의 여행지를 찾아보는 재미가 있습니다. 수로에서 작은 보트를 타며 안달루시아의 열정을 만끽하세요.
+            </p>
+          </div>
+
+          <!-- Spot 4: Flamenco Duende -->
+          <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-2">
+            <h4 class="text-sm font-bold text-slate-900">4. 정통 플라멩코 & '두엔데(Duende)'의 카타르시스</h4>
+            <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <strong>도슨트 해설:</strong> 플라멩코는 단순한 춤이 아닌, 안달루시아 집시들의 피와 눈물, 박해의 한이 깃든 영혼의 예술입니다. 애절하게 부르짖는 가창인 <strong>'칸테(Cante)'</strong>, 바닥을 내리치는 격렬한 발구름 <strong>'사파테아도(Zapateado)'</strong>가 극한에 달할 때 느껴지는 소름 돋는 황홀경인 <strong>'두엔데(Duende)'</strong>를 경험해 보세요.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- TAB 4: 🥐 미식·나타·쇼핑 (Gourmet & Shopping) -->
+      <section id="tab-gourmet" class="tab-panel hidden space-y-4">
+        
+        <!-- Interactive Egg Tart Anatomy (From Playbook Page 10) -->
+        <div class="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 rounded-2xl p-4 text-white shadow-lg space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold bg-black/30 px-2 py-0.5 rounded uppercase">파브리카 데 나타 호시우점 기준</span>
+            <span class="text-xs font-semibold text-amber-200">1일 1나타 국룰 🥐</span>
+          </div>
+          <h3 class="text-base font-extrabold">에그타르트(나타)의 해부학</h3>
+          <p class="text-xs text-amber-100 opacity-90 leading-relaxed">
+            아래 부위를 탭하여 맛의 비결과 먹는 팁을 확인하세요!
+          </p>
+
+          <!-- Interactive Tart Diagram representation -->
+          <div class="bg-white/10 rounded-xl p-3 backdrop-blur-sm border border-white/20 space-y-2 text-xs">
+            
+            <div onclick="selectTartPart('top')" class="p-2 rounded-lg bg-white/20 hover:bg-white/30 cursor-pointer transition flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-amber-900 inline-block border border-white"></span>
+                <strong>① 카라멜라이즈드 탑 (불맛 표면)</strong>
+              </div>
+              <span class="text-[10px] text-amber-200">탭하기 ➔</span>
+            </div>
+
+            <div onclick="selectTartPart('cream')" class="p-2 rounded-lg bg-white/20 hover:bg-white/30 cursor-pointer transition flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-yellow-300 inline-block border border-white"></span>
+                <strong>② 커스터드 크림 (속살)</strong>
+              </div>
+              <span class="text-[10px] text-amber-200">탭하기 ➔</span>
+            </div>
+
+            <div onclick="selectTartPart('pastry')" class="p-2 rounded-lg bg-white/20 hover:bg-white/30 cursor-pointer transition flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-amber-200 inline-block border border-white"></span>
+                <strong>③ 페이스트리 쉘 (수십 겹의 바닥)</strong>
+              </div>
+              <span class="text-[10px] text-amber-200">탭하기 ➔</span>
+            </div>
+
+            <!-- Dynamic Part Details Box -->
+            <div id="tartDetailBox" class="mt-2 p-2.5 bg-black/40 rounded-lg text-xs leading-relaxed text-amber-100 border border-amber-300/30">
+              💡 <strong>먹는 법:</strong> 테이블에 비치된 시나몬(계피가루)과 슈가 파우더를 톡톡 뿌려 따뜻한 비카(에스프레소)와 함께 드세요!
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Essential Portuguese Cuisines -->
+        <div class="space-y-2.5">
+          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">포르투갈 필수 미식 4대장</h3>
+          
+          <div class="grid grid-cols-1 gap-2.5 text-xs">
+            <!-- 1. Bacalhau -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex space-x-3 items-center">
+              <div class="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0">🐟</div>
+              <div>
+                <strong class="text-slate-900 text-sm">바칼라우 (Bacalhau)</strong>
+                <p class="text-slate-500 text-[11px] mt-0.5 leading-tight">짭짤하고 고소한 국민 대구 요리. 올리브오일과 구운 감자를 곁들인 전통 조리법이 일품.</p>
+              </div>
+            </div>
+
+            <!-- 2. Arroz de Marisco -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex space-x-3 items-center">
+              <div class="w-12 h-12 rounded-lg bg-rose-50 flex items-center justify-center text-2xl flex-shrink-0">🥘</div>
+              <div>
+                <strong class="text-slate-900 text-sm">아호스 드 마리스코 (Arroz de Marisco)</strong>
+                <p class="text-slate-500 text-[11px] mt-0.5 leading-tight">한국인 입맛에 딱! 새우, 조개, 홍합이 듬뿍 들어간 시원하고 얼큰한 해물 토마토 국물 밥.</p>
+              </div>
+            </div>
+
+            <!-- 3. Francesinha -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex space-x-3 items-center">
+              <div class="w-12 h-12 rounded-lg bg-amber-50 flex items-center justify-center text-2xl flex-shrink-0">🥪</div>
+              <div>
+                <strong class="text-slate-900 text-sm">프란세지냐 (Francesinha)</strong>
+                <p class="text-slate-500 text-[11px] mt-0.5 leading-tight">포르투의 명물 '내장파괴 샌드위치'. 햄, 소시지, 스테이크 위에 치즈와 맥주 토마토 소스를 듬뿍!</p>
+              </div>
+            </div>
+
+            <!-- 4. Port Wine -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex space-x-3 items-center">
+              <div class="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center text-2xl flex-shrink-0">🍷</div>
+              <div>
+                <strong class="text-slate-900 text-sm">포트와인 (Port Wine)</strong>
+                <p class="text-slate-500 text-[11px] mt-0.5 leading-tight">브랜디를 첨가해 알코올 도수 19~20도로 높인 달콤한 주정강화 와인 (루비, 토니, 화이트).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW: 도시별 웨이팅 ZERO 로컬 맛집 & 시간대 공략 -->
+        <div class="bg-white rounded-2xl p-3.5 border border-amber-200/90 shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div>
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                <span class="text-sm">⚡</span> 도시별 웨이팅 ZERO 맛집 & 시간대 공략
+              </h3>
+              <p class="text-[10px] text-slate-500 mt-0.5">회전율 빠른 스탠딩 바 & 유명 맛집 쾌속 대안처</p>
+            </div>
+            <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full border border-amber-200">여행 꿀팁</span>
+          </div>
+
+          <!-- Restaurant City Segment Buttons -->
+          <div class="flex p-1 bg-slate-100 rounded-xl text-xs font-semibold">
+            <button onclick="filterRestaurants('all')" id="rf-all" class="flex-1 py-1 rounded-lg bg-white shadow-sm text-slate-900 font-bold transition">전체</button>
+            <button onclick="filterRestaurants('lisbon')" id="rf-lisbon" class="flex-1 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition">리스본</button>
+            <button onclick="filterRestaurants('porto')" id="rf-porto" class="flex-1 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition">포르투</button>
+            <button onclick="filterRestaurants('seville')" id="rf-seville" class="flex-1 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition">세비야</button>
+          </div>
+
+          <!-- Restaurant List Container -->
+          <div id="noWaitRestList" class="space-y-2.5">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+
+        <!-- Shopping 4 Must-Buy Items -->
+        <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <span>🛍️</span> 필수 쇼핑 리스트 & 면세점 팁
+            </h3>
+            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded">택스리펀 가능</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+              <div class="font-bold text-azulejo-700">🐟 정어리 통조림</div>
+              <p class="text-[11px] text-slate-500 mt-0.5">화려한 빈티지 아트 패키징(출생연도 디자인). 선물용 원픽.</p>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+              <div class="font-bold text-azulejo-700">🪵 코르크 공예품</div>
+              <p class="text-[11px] text-slate-500 mt-0.5">세계 최대 생산국! 방수와 내구성이 뛰어난 지갑, 컵받침, 가방.</p>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+              <div class="font-bold text-azulejo-700">🎨 아줄레주 타일 마그넷</div>
+              <p class="text-[11px] text-slate-500 mt-0.5">전통 푸른 타일 문양 수공예 마그넷 및 냄비받침.</p>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+              <div class="font-bold text-azulejo-700">🫒 포르투갈 올리브 오일</div>
+              <p class="text-[11px] text-slate-500 mt-0.5">품질 대비 가격이 매우 저렴한 최상급 엑스트라 버진 오일.</p>
+            </div>
+          </div>
+
+          <div class="bg-amber-50 p-2.5 rounded-xl text-[11px] text-amber-800 leading-tight border border-amber-200">
+            <strong>💡 공항 출국 팁:</strong> 리스본 공항 터미널 1 면세구역 내 상점에서도 시내와 동일한 가격에 정어리 통조림과 포트와인을 판매하므로 액체류 무게 부담 없이 출국 직전 구매가 가능합니다!
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TAB 5: 🚨 교통 & 생존 치트키 (Transport & Safety) -->
+      <section id="tab-survival" class="tab-panel hidden space-y-4">
+        
+        <!-- Airport to City Comparison Table -->
+        <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">공항 ➔ 시내 이동 수단 총정리</h3>
+            <span class="text-[10px] text-azulejo-600 font-bold">e-gate 자동심사 가능</span>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <!-- Metro -->
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start justify-between">
+              <div>
+                <strong class="text-slate-900">🚇 지하철 (메트로)</strong>
+                <p class="text-[11px] text-slate-500 mt-0.5">레드라인 탑승 ➔ 알라메다역 환승 ➔ 로시우역</p>
+                <p class="text-[11px] text-slate-600 font-medium mt-1">네베간테 카드(보증금 0.5€), 24시간권 6.8€ 추천</p>
+              </div>
+              <div class="text-right flex-shrink-0 ml-2">
+                <span class="font-bold text-slate-800">1.8€</span>
+                <span class="block text-[10px] text-slate-400">약 35분</span>
+              </div>
+            </div>
+
+            <!-- Uber / Bolt -->
+            <div class="p-2.5 rounded-xl bg-blue-50 border border-blue-200 flex items-start justify-between">
+              <div>
+                <strong class="text-azulejo-900">🚕 우버 / 볼트 (2인+ 추천)</strong>
+                <p class="text-[11px] text-azulejo-700 mt-0.5">2층 출국장 'Kiss & Fly' 구역에서 탑승 필수</p>
+                <p class="text-[11px] text-slate-600 font-medium mt-1">도어 투 도어로 숙소 앞 바로 도착, 피로도 최소화</p>
+              </div>
+              <div class="text-right flex-shrink-0 ml-2">
+                <span class="font-bold text-azulejo-800">10~15€</span>
+                <span class="block text-[10px] text-slate-500">약 25분</span>
+              </div>
+            </div>
+
+            <!-- Night Bus 208 -->
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start justify-between">
+              <div>
+                <strong class="text-slate-900">🚌 야간 버스 (208번)</strong>
+                <p class="text-[11px] text-slate-500 mt-0.5">심야(새벽 1시~5시) 메트로 끊겼을 때 유용</p>
+                <p class="text-[11px] text-slate-600 font-medium mt-1">기사님께 현금 직접 지불 가능</p>
+              </div>
+              <div class="text-right flex-shrink-0 ml-2">
+                <span class="font-bold text-slate-800">2.1€</span>
+                <span class="block text-[10px] text-slate-400">약 40분</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key Bus & Tram Routes (Playbook Page 5) -->
+        <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm space-y-2.5">
+          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+            <span>🚋</span> 대중교통 핵심 치트키 노선
+          </h3>
+
+          <div class="space-y-1.5 text-xs">
+            <div class="p-2 rounded-lg bg-amber-50/70 border border-amber-200">
+              <strong class="text-amber-900">28번 트램:</strong> 알파마 언덕을 오르는 낭만 노선 (종점 마르팀 모니스에서 이른 아침 탑승 시 웨이팅 최소화. 소매치기 절대 주의).
+            </div>
+            <div class="p-2 rounded-lg bg-slate-50 border border-slate-100">
+              <strong class="text-slate-800">728번 버스:</strong> 헤스텔루 ↔ 포르텔라 (벨렝 탑, 코메르시우 광장, 오리엔트역을 관통하는 황금 노선).
+            </div>
+            <div class="p-2 rounded-lg bg-slate-50 border border-slate-100">
+              <strong class="text-slate-800">737번 미니버스:</strong> 피게이라 광장 ↔ 상 조르제 성 입구 (언덕길을 힘 안 들이고 오르는 꿀노선).
+            </div>
+            <div class="p-2 rounded-lg bg-slate-50 border border-slate-100">
+              <strong class="text-slate-800">714번 버스:</strong> 피게이라 광장 ↔ 벨렝 궁전 & 제로니무스 수도원 직행.
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Pre-Booking Checklist -->
+        <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">사전 필수 예약 체크리스트</h3>
+            <span class="text-[10px] text-slate-400">터치하여 완료 표시</span>
+          </div>
+
+          <div class="space-y-2 text-xs" id="bookingChecklist">
+            <label class="flex items-center space-x-2.5 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer">
+              <input type="checkbox" class="rounded text-azulejo-600 focus:ring-azulejo-500 w-4 h-4">
+              <span class="text-slate-700"><strong>포르투 클레리구스 타워 & 스피리투스 쇼</strong> (매진 잦음)</span>
+            </label>
+            <label class="flex items-center space-x-2.5 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer">
+              <input type="checkbox" class="rounded text-azulejo-600 focus:ring-azulejo-500 w-4 h-4">
+              <span class="text-slate-700"><strong>테일러 와이너리(Taylor's)</strong> 투어 시간대 확보</span>
+            </label>
+            <label class="flex items-center space-x-2.5 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer">
+              <input type="checkbox" class="rounded text-azulejo-600 focus:ring-azulejo-500 w-4 h-4">
+              <span class="text-slate-700"><strong>리스본 Fado in Chiado / 포르투 파두 공연</strong></span>
+            </label>
+            <label class="flex items-center space-x-2.5 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer">
+              <input type="checkbox" class="rounded text-azulejo-600 focus:ring-azulejo-500 w-4 h-4">
+              <span class="text-slate-700"><strong>도우로 밸리 와인 투어 & 6개 다리 크루즈</strong></span>
+            </label>
+            <label class="flex items-center space-x-2.5 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer">
+              <input type="checkbox" class="rounded text-azulejo-600 focus:ring-azulejo-500 w-4 h-4">
+              <span class="text-slate-700"><strong>세비야 대성당 & 알카사르 궁전</strong> 공식 사이트 예약</span>
+            </label>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- BOTTOM FIXED NAVIGATION BAR -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 z-40 px-2 py-1.5 flex justify-around items-center shadow-lg">
+      <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center py-1 px-2 text-azulejo-600 transition tap-highlight-transparent">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">치트키</span>
+      </button>
+
+      <button onclick="switchTab('itinerary')" id="nav-itinerary" class="nav-btn flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        <span class="text-[10px] font-semibold mt-0.5">13일 일정</span>
+      </button>
+
+      <button onclick="switchTab('docent')" id="nav-docent" class="nav-btn flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+        <span class="text-[10px] font-semibold mt-0.5">도슨트 해설</span>
+      </button>
+
+      <button onclick="switchTab('gourmet')" id="nav-gourmet" class="nav-btn flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+        <span class="text-[10px] font-semibold mt-0.5">미식·쇼핑</span>
+      </button>
+
+      <button onclick="switchTab('survival')" id="nav-survival" class="nav-btn flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+        <span class="text-[10px] font-semibold mt-0.5">교통·안전</span>
+      </button>
+    </nav>
+
+    <!-- POPUP MODAL: Interactive Currency Converter -->
+    <div id="calcModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl w-full max-w-sm p-4 shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">💶</span>
+            <h3 class="font-bold text-slate-900 text-sm">유로(EUR) ↔ 원화(KRW) 계산기</h3>
+          </div>
+          <button onclick="closeCalcModal()" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+        </div>
+
+        <div class="text-[11px] text-slate-500 bg-slate-50 p-2 rounded-lg flex justify-between items-center">
+          <span>기준 환율: 1 EUR ≈ <strong>1,496 KRW</strong></span>
+          <span class="text-emerald-600 font-semibold">실전 여행 기준</span>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">유로 (€ EUR)</label>
+            <div class="relative">
+              <input type="number" id="inputEuro" oninput="convertFromEuro(this.value)" placeholder="예: 20 (테일러 와이너리)" class="w-full border border-slate-300 rounded-xl py-2 px-3 text-sm focus:ring-2 focus:ring-azulejo-500 focus:outline-none">
+              <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-bold">€</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">원화 (₩ KRW)</label>
+            <div class="relative">
+              <input type="text" id="inputWon" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl py-2 px-3 text-sm font-bold text-azulejo-700">
+              <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-bold">원</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-4 gap-1.5 pt-1">
+            <button onclick="setPresetEuro(1.8)" class="py-1 px-2 text-[11px] bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700">1.8€ (메트로)</button>
+            <button onclick="setPresetEuro(6.8)" class="py-1 px-2 text-[11px] bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700">6.8€ (24시간권)</button>
+            <button onclick="setPresetEuro(20)" class="py-1 px-2 text-[11px] bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700">20€ (테일러)</button>
+            <button onclick="setPresetEuro(15)" class="py-1 px-2 text-[11px] bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700">15€ (우버)</button>
+          </div>
+        </div>
+
+        <button onclick="closeCalcModal()" class="w-full bg-azulejo-600 hover:bg-azulejo-700 text-white font-bold text-xs py-2.5 rounded-xl transition">
+          닫기
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JavaScript Application Logic -->
+  <script>
+    // 12-day Full Itinerary Dataset based on documents
+    const itineraryData = [
+      {
+        day: 1,
+        date: "11/8 (금)",
+        city: "lisbon",
+        title: "리스본 도착 및 바이샤 지구의 첫인상",
+        hotel: "로시우 플라자 호텔",
+        badge: "리스본 1일차",
+        timeline: [
+          { time: "오후", desc: "리스본 공항 도착 ➔ e-gate(자동출입국심사) 신속 통과 ➔ 2층 출국장 Kiss & Fly에서 우버 탑승(10~15€) 또는 메트로로 로시우 플라자 호텔 체크인." },
+          { time: "저녁", desc: "로시우 광장과 아우구스타 거리 산책. 파브리카 데 나타에서 갓 구운 에그타르트(나타)와 비카(에스프레소)로 여독 풀기." }
+        ],
+        docentNote: "호텔이 로시우 광장에 접해 있어 트램, 메트로, 도보 산책 동선이 최적입니다."
+      },
+      {
+        day: 2,
+        date: "11/9 (토)",
+        city: "lisbon",
+        title: "알파마 미로 골목과 파두(Fado)의 밤",
+        hotel: "로시우 플라자 호텔",
+        badge: "리스본 2일차",
+        timeline: [
+          { time: "오전", desc: "바이샤 지구 및 아우구스타 개선문 통과 ➔ 타구스 강변 코메르시우 광장의 돈 호세 1세 기마상 감상." },
+          { time: "오후", desc: "1755년 대지진을 버틴 옛 아랍 골목 알파마(Alfama) 지구 탐방 ➔ 포르타스 두 솔(태양의 문) 전망대에서 붉은 지붕 조망." },
+          { time: "저녁", desc: "알파마 골목 작은 선술집 또는 Fado in Chiado 공연장에서 전통 파두 감상." }
+        ],
+        docentNote: "파두는 바다로 떠난 가족을 기다리며 생겨난 포르투갈 민중의 정서 '사우다드(Saudade)'가 담겨 있습니다."
+      },
+      {
+        day: 3,
+        date: "11/10 (일)",
+        city: "lisbon",
+        title: "벨렝 지구 대항해 역사 & 환상 일몰",
+        hotel: "로시우 플라자 호텔",
+        badge: "리스본 3일차",
+        timeline: [
+          { time: "오전", desc: "714번 또는 728번 버스 탑승 ➔ 제로니무스 수도원 & 벨렝 탑 & 발견기념비 탐방 ➔ 원조 파스테이스 드 벨렝 방문." },
+          { time: "오후", desc: "4월 25일 다리와 강 건너 크리스토 헤이(그리스도상) 조망. 카네이션 혁명의 역사 느끼기." },
+          { time: "일몰/저녁", desc: "세뇨라 두 몬트 전망대 & 미라도루 다 그라사에서 와인 한 잔을 들고 일곱 개 언덕 파노라마 야경 감상." }
+        ],
+        docentNote: "세뇨라 두 몬트는 리스본에서 가장 높은 곳으로, 해 질 녘 도심 전체가 주황에서 보랏빛으로 물드는 1픽 명소입니다."
+      },
+      {
+        day: 4,
+        date: "11/11 (월)",
+        city: "porto",
+        title: "리스본 ➔ 포르투 AP 고속열차 이동 & 히베이라 야경",
+        hotel: "상벤투역 인근 에어비앤비",
+        badge: "포르투 1일차 (이동)",
+        timeline: [
+          { time: "13:00", desc: "로시우 광장 기념품 숍(아줄레주, 정어리 통조림, 코르크) 쇼핑 ➔ 산타 아폴로니아 또는 오리엔테 역 이동." },
+          { time: "14:00", desc: "AP 133 열차 출발 (1등석 C1 L11, L12) ➔ 16:48 포르투 캄파냐(Campanhã)역 도착." },
+          { time: "17:00", desc: "캄파냐역에서 상벤투역 행 로컬열차(Urbanos) 무료 환승 ➔ 에어비앤비 체크인." },
+          { time: "저녁", desc: "도우로 강변 히베이라(Ribeira) 지구를 거닐며 동 루이스 1세 다리의 환상적인 조명 아래 저녁 식사." }
+        ],
+        docentNote: "AP 기차표 소지자는 캄파냐에서 상벤투역까지 추가 요금 없이 무료 환승 가능합니다."
+      },
+      {
+        day: 5,
+        date: "11/12 (화)",
+        city: "porto",
+        title: "포르투 5대 명소 감성 스냅촬영 & 파두의 밤",
+        hotel: "상벤투역 인근 에어비앤비",
+        badge: "포르투 2일차",
+        timeline: [
+          { time: "오전/낮", desc: "인생샷 스냅촬영: 상벤투역(2만장 아줄레주) ➔ 알마스 예배당 ➔ 히베이라 강변 ➔ 동 루이스 다리 상층부 ➔ 모루 정원." },
+          { time: "오후", desc: "카페 마제스틱(Majestic Café) 또는 꽃의 거리(Rua das Flores) 감성 카페에서 휴식." },
+          { time: "저녁", desc: "A Casa do Fado 전용 공연장에서 마이크 없는 순수 어쿠스틱 파두 라이브 감상." }
+        ],
+        docentNote: "푸른 아줄레주와 붉은 지붕 배경에서는 화이트/베이지 단색 톤 의상이 가장 세련되게 나옵니다."
+      },
+      {
+        day: 6,
+        date: "11/13 (수)",
+        city: "porto",
+        title: "가이아 언덕 테일러 와이너리 집중 투어",
+        hotel: "상벤투역 인근 에어비앤비",
+        badge: "포르투 3일차",
+        timeline: [
+          { time: "오후", desc: "도우로강을 건너 빌라 노바 드 가이아(Gaia) 언덕으로 이동 ➔ 테일러 와이너리(Taylor's) 방문." },
+          { time: "투어", desc: "한국어 오디오 가이드로 포트와인 오크통 양조장 탐방 ➔ 대형 오크통 셀피 머신 사진 촬영." },
+          { time: "시음", desc: "포도밭 정원에서 포트와인 3종 시음 + 4유로 올리브 안주 조합 ➔ 기념품숍 '생빈(생일 빈티지)' 와인 탐색." }
+        ],
+        docentNote: "항해 중 와인이 상하지 않도록 브랜디를 섞은 주정강화 와인의 역사를 배우는 시간입니다."
+      },
+      {
+        day: 7,
+        date: "11/14 (목)",
+        city: "porto",
+        title: "전용 투어: 브라가 & 기마랑이스 일일 역사 투어",
+        hotel: "상벤투역 인근 에어비앤비",
+        badge: "포르투 4일차 (근교)",
+        timeline: [
+          { time: "오전", desc: "포르투갈의 종교 수도 브라가(Braga) 이동 ➔ 봉 제주스 성당의 바로크 지그재그 순례 계단과 감각의 분수 관람." },
+          { time: "오후", desc: "포르투갈 건국 초대 왕의 요람 기마랑이스(Guimarães) 성과 중세 구시가지 탐방." },
+          { time: "저녁", desc: "포르투 복귀 후 상벤투 인근 타파스 바에서 편안한 저녁 식사." }
+        ],
+        docentNote: "개인 수신기용 이어폰을 꼭 지참하세요. 돌바닥 성곽이므로 편한 운동화 필수입니다."
+      },
+      {
+        day: 8,
+        date: "11/15 (금)",
+        city: "porto",
+        title: "클래식 건축 & 클레리구스 '스피리투스' 조명 쇼",
+        hotel: "상벤투역 인근 에어비앤비",
+        badge: "포르투 5일차",
+        timeline: [
+          { time: "낮", desc: "포르투 대성당(Sé) 관람 후 팔라시오 다 볼사(Palácio da Bolsa)의 눈부신 '아라비아의 방' 입장." },
+          { time: "일몰", desc: "클레리구스 종탑에 올라 포르투 360도 전경 감상." },
+          { time: "야간", desc: "클레리구스 교회 내부에서 펼쳐지는 '스피리투스(Spiritus)' 입체 미디어아트 조명 쇼 관람." }
+        ],
+        docentNote: "스피리투스 쇼는 음악과 빛이 바로크 석조 벽면을 감싸는 몰입형 예술로事前 예약이 안전합니다."
+      },
+      {
+        day: 9,
+        date: "11/16 (토)",
+        city: "porto",
+        title: "도우로 밸리 투어 또는 WOW 문화 지구 & 6개 다리 크루즈",
+        hotel: "상벤투역 인근 에어비앤비",
+        badge: "포르투 6일차",
+        timeline: [
+          { time: "낮", desc: "WOW 포르투 복합 문화지구 탐방 또는 도우로강 6개 다리 크루즈 탑승하여 강 위에서 에펠의 철교 감상." },
+          { time: "해질녘", desc: "모루 정원(Jardim do Morro) 잔디밭에 앉아 마지막 포르투의 황금빛 노을 배웅." }
+        ],
+        docentNote: "모루 정원은 거리 버스커의 음악과 함께 노을을 바라보는 포르투 최고의 로맨틱 스팟입니다."
+      },
+      {
+        day: 10,
+        date: "11/17 (일)",
+        city: "seville",
+        title: "포르투 ➔ 스페인 세비야 이동 & 대성당 첫 야경",
+        hotel: "소호 부티크 카테드랄",
+        badge: "세비야 1일차 (이동)",
+        timeline: [
+          { time: "오전", desc: "도우로 강변 카페에서 마지막 에스프레소 ➔ 세비야로 국경 이동 (직항 항공편 또는 고속버스)." },
+          { time: "오후", desc: "세비야 도착 후 대성당 100m 앞 '소호 부티크 카테드랄' 호텔 체크인." },
+          { time: "저녁", desc: "조명을 받아 웅장하게 빛나는 세비야 대성당과 히랄다 탑 주변 골목 타파스 바 투어." }
+        ],
+        docentNote: "호텔에서 대성당이 도보 1분 거리라 언제든 쉬어갈 수 있는 최적의 안달루시아 베이스캠프입니다."
+      },
+      {
+        day: 11,
+        date: "11/18 (월)",
+        city: "seville",
+        title: "세비야 대성당 & 히랄다 & 정통 플라멩코",
+        hotel: "소호 부티크 카테드랄",
+        badge: "세비야 2일차",
+        timeline: [
+          { time: "오전", desc: "세계 3대 성당인 세비야 대성당 내부 콜럼버스의 묘 감상 ➔ 35개 경사로를 걸어 히랄다 탑 정상 등반." },
+          { time: "오후", desc: "이슬람과 가톨릭이 빚어낸 무데하르 양식의 정수 알카사르 궁전 관람." },
+          { time: "저녁", desc: "정통 플라멩코 공연 관람: 칸테(노래)와 사파테아도(발구름), 소름 돋는 '두엔데'의 감동 체험." }
+        ],
+        docentNote: "히랄다 탑은 계단이 아닌 경사로로 되어 있어 옛 술탄이 말을 타고 올랐던 곳입니다."
+      },
+      {
+        day: 12,
+        date: "11/19 (화)",
+        city: "seville",
+        title: "스페인 광장의 낭만과 안달루시아 다이닝",
+        hotel: "소호 부티크 카테드랄",
+        badge: "세비야 3일차",
+        timeline: [
+          { time: "오전", desc: "스페인 광장(Plaza de España)에서 48개 주 역사 타일 벤치 찾기 & 수로 보트 체험." },
+          { time: "오후", desc: "마리아 루이사 공원의 시원한 그늘 산책 및 구시가지 감성 기념품 쇼핑." },
+          { time: "저녁", desc: "정통 이베리코 하몬과 상그리아를 곁들인 마지막 밤 만찬." }
+        ],
+        docentNote: "스페인 광장은 해 질 녘 붉은 벽돌과 석양이 어우러질 때 가장 눈부신 풍경을 자아냅니다."
+      },
+      {
+        day: 13,
+        date: "11/20 (수)",
+        city: "seville",
+        title: "12박 13일 여정 마무리 및 귀국",
+        hotel: "체크아웃",
+        badge: "마지막 날",
+        timeline: [
+          { time: "오전", desc: "소호 부티크 체크아웃 ➔ 짐 정리 및 택스리펀 영수증 확인 ➔ 공항 이동 후 안전하게 귀국길." }
+        ],
+        docentNote: "바람과 파두, 와인과 대성당이 남긴 깊은 여운을 가슴에 품고 일상으로 복귀합니다."
+      }
+    ];
+
+    // Render Timeline on Load
+    function renderTimeline(filterCity = 'all') {
+      const container = document.getElementById('timelineList');
+      container.innerHTML = '';
+
+      const filtered = filterCity === 'all' 
+        ? itineraryData 
+        : itineraryData.filter(item => item.city === filterCity);
+
+      filtered.forEach(item => {
+        const div = document.createElement('div');
+        div.className = "bg-white rounded-xl border border-slate-200 shadow-sm p-3.5 space-y-2.5 transition hover:border-azulejo-400";
+        
+        let cityColor = "bg-azulejo-100 text-azulejo-800";
+        if(item.city === 'porto') cityColor = "bg-purple-100 text-purple-800";
+        if(item.city === 'seville') cityColor = "bg-amber-100 text-amber-800";
+
+        div.innerHTML = `
+          <div class="flex items-center justify-between cursor-pointer" onclick="toggleTimelineDetail('day-${item.day}')">
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-bold px-2 py-0.5 rounded-full ${cityColor}">${item.badge}</span>
+              <span class="text-xs font-semibold text-slate-500">${item.date}</span>
+            </div>
+            <div class="flex items-center space-x-1.5">
+              <span class="text-[10px] text-slate-400 font-medium">상세보기</span>
+              <span id="day-${item.day}-arrow" class="text-xs text-slate-400">▼</span>
+            </div>
+          </div>
+
+          <h4 class="text-sm font-bold text-slate-900 leading-snug cursor-pointer" onclick="toggleTimelineDetail('day-${item.day}')">
+            ${item.title}
+          </h4>
+
+          <div class="text-[11px] text-slate-500 flex items-center gap-1">
+            <span>🏨 <strong>거점:</strong> ${item.hotel}</span>
+          </div>
+
+          <!-- Collapsible Timeline Details -->
+          <div id="day-${item.day}" class="hidden pt-2.5 border-t border-slate-100 space-y-2 text-xs">
+            <div class="space-y-1.5">
+              ${item.timeline.map(t => `
+                <div class="flex items-start space-x-2">
+                  <span class="font-bold text-azulejo-700 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] flex-shrink-0">${t.time}</span>
+                  <span class="text-slate-700 leading-relaxed">${t.desc}</span>
+                </div>
+              `).join('')}
+            </div>
+            <div class="bg-amber-50/70 p-2.5 rounded-lg border border-amber-200/80 text-[11px] text-amber-900 leading-tight">
+              <strong>🎙️ 도슨트 팁:</strong> ${item.docentNote}
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Toggle Details function
+    function toggleTimelineDetail(id) {
+      const el = document.getElementById(id);
+      const arrow = document.getElementById(id + '-arrow');
+      if (el.classList.contains('hidden')) {
+        el.classList.remove('hidden');
+        if(arrow) arrow.innerText = '▲';
+      } else {
+        el.classList.add('hidden');
+        if(arrow) arrow.innerText = '▼';
+      }
+    }
+
+    // Filter Itinerary Segment
+    function filterItinerary(city) {
+      ['all', 'lisbon', 'porto', 'seville'].forEach(c => {
+        const btn = document.getElementById(`btn-itin-${c}`);
+        if(btn) {
+          if (c === city) {
+            btn.className = "flex-1 py-1.5 rounded-lg bg-white shadow-sm text-slate-900 font-bold transition";
+          } else {
+            btn.className = "flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition font-medium";
+          }
+        }
+      });
+      renderTimeline(city);
+    }
+
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+      // Update Nav Button Styles
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-azulejo-600');
+        btn.classList.add('text-slate-400');
+      });
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      if(activeNav) {
+        activeNav.classList.remove('text-slate-400');
+        activeNav.classList.add('text-azulejo-600');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Docent Subcity Switch
+    function switchDocentCity(city) {
+      ['lisbon', 'porto', 'seville'].forEach(c => {
+        document.getElementById(`docent-content-${c}`).classList.add('hidden');
+        const tabBtn = document.getElementById(`doc-tab-${c}`);
+        tabBtn.className = "py-2 px-3 border-b-2 border-transparent text-slate-500 hover:text-slate-900 flex-1 text-center font-medium";
+      });
+
+      document.getElementById(`docent-content-${city}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`doc-tab-${city}`);
+      activeBtn.className = "py-2 px-3 border-b-2 border-azulejo-600 text-azulejo-600 flex-1 text-center font-bold";
+    }
+
+    // Interactive Card Collapsible
+    function toggleCard(cardId) {
+      const card = document.getElementById(cardId);
+      const arrow = document.getElementById(cardId + '-arrow');
+      if (card.classList.contains('hidden')) {
+        card.classList.remove('hidden');
+        if(arrow) arrow.innerText = '▲';
+      } else {
+        card.classList.add('hidden');
+        if(arrow) arrow.innerText = '▼';
+      }
+    }
+
+    // Interactive Tart Part Selection
+    function selectTartPart(part) {
+      const box = document.getElementById('tartDetailBox');
+      if (part === 'top') {
+        box.innerHTML = "🔥 <strong>카라멜라이즈드 탑:</strong> 고온 오븐에서 직화로 그을려 바삭하고 달콤 쌉싸름한 불맛이 납니다. 시나몬 가루를 가볍게 털어 올리면 풍미가 배가됩니다!";
+      } else if (part === 'cream') {
+        box.innerHTML = "🍮 <strong>커스터드 크림:</strong> 신선한 달걀 노른자와 바닐라빈이 녹아들어 입안 가득 부드러운 온기를 선사합니다. 너무 달지 않은 고급스러운 단맛이 핵심!";
+      } else if (part === 'pastry') {
+        box.innerHTML = "🥐 <strong>페이스트리 쉘:</strong> 버터를 얇게 접어 넣은 수십 겹의 페이스트리로, 한입 베어 물 때 '바사삭' 소리가 날 정도로 극강의 바삭함을 자랑합니다.";
+      }
+    }
+
+    // Currency Calculator Logic (1 EUR ≈ 1,496 KRW)
+    const EUR_RATE = 1496;
+    function openCalcModal() {
+      document.getElementById('calcModal').classList.remove('hidden');
+    }
+    function closeCalcModal() {
+      document.getElementById('calcModal').classList.add('hidden');
+    }
+    function convertFromEuro(val) {
+      const num = parseFloat(val);
+      if (isNaN(num) || num < 0) {
+        document.getElementById('inputWon').value = "";
+      } else {
+        const won = Math.round(num * EUR_RATE);
+        document.getElementById('inputWon').value = won.toLocaleString('ko-KR');
+      }
+    }
+    function setPresetEuro(amt) {
+      document.getElementById('inputEuro').value = amt;
+      convertFromEuro(amt);
+    }
+
+    // NEW: No-Wait Local Restaurants Dataset
+    const restaurantData = [
+      {
+        city: 'lisbon',
+        cityName: '리스본',
+        name: 'As Bifanas do Afonso',
+        category: '비파나(돼지고기 샌드위치)',
+        noWaitReason: '테이크아웃 및 스탠딩 전용. 줄이 10명 있어도 2~3분 안에 빠지는 압도적 회전율!',
+        bestMenu: '비파나(Bifana) + 시원한 생맥주(Imperial) [약 4€]',
+        tip: '겨자 소스(Mostarda)와 피리피리(매운 고추 소스)를 취향껏 뿌려 서서 먹는 것이 현지 국룰입니다.',
+        searchKey: 'As Bifanas do Afonso'
+      },
+      {
+        city: 'lisbon',
+        cityName: '리스본',
+        name: 'A Marisqueira do Lis',
+        category: '해산물 & 맥주 바 (라미로 대안)',
+        noWaitReason: '라미로(Ramiro)의 1~2시간 살인적 대기 대신 인근 인텐덴트 지역 최고 대안. 바(Balcão) 자리는 웨이팅 없이 즉시 착석 가능.',
+        bestMenu: '마늘 버터 새우(Camarão ao Alho) & 암게 살/내장(Sapateira Recheada)',
+        tip: '입구 카운터 바에 앉으면 주방에서 바로 조리된 해산물과 맥주를 초고속으로 즐길 수 있습니다.',
+        searchKey: 'A Marisqueira do Lis'
+      },
+      {
+        city: 'lisbon',
+        cityName: '리스본',
+        name: 'Manteigaria (카몽이스 광장점)',
+        category: '에그타르트(나타) 전문점',
+        noWaitReason: '벨렝 본점의 40분 대기 대비, 카운터 주문 즉시 오븐에서 갓 나온 따끈따끈한 타르트를 1분 만에 수령.',
+        bestMenu: '파스텔 드 나타(1.3€) + 에스프레소 비카(0.9€)',
+        tip: '종소리가 울리면 새 판이 나온 신호! 카운터에 서서 시나몬 가루를 톡톡 뿌려 바로 드세요.',
+        searchKey: 'Manteigaria Camões'
+      },
+      {
+        city: 'lisbon',
+        cityName: '리스본',
+        name: 'Zé da Mouraria 2호점 (Gomes Freire)',
+        category: '대구(Bacalhau) & 문어 전통식당',
+        noWaitReason: '모라리아 본점 1호점은 좁아서 줄이 길지만, 2호점은 매장이 넓어 12:30 전후 방문 시 대기 없이 착석.',
+        bestMenu: '바칼라우 아사두(구운 대구살과 병아리콩) [2인분 같은 1인분]',
+        tip: '양이 매우 푸짐하므로 2명이 방문해도 메인 요리 1개와 수프 1개면 충분합니다.',
+        searchKey: 'Zé da Mouraria 2 Rua Gomes Freire'
+      },
+      {
+        city: 'porto',
+        cityName: '포르투',
+        name: 'Cachorrinho Gazela (가젤라)',
+        category: '포르투식 매콤 핫도그 (카쇼링요)',
+        noWaitReason: '배틀트립/미식 방송 극찬 명물. 긴 카운터 바 좌석으로 주문 3분 만에 서빙되며 회전율 5분 이내!',
+        bestMenu: '카쇼링요(바삭 매콤 소시지 샌드위치 약 4.2€) + 생맥주',
+        tip: '겉은 바삭하고 매콤한 특제 소스가 발라져 나옵니다. 혼자 가도 부담 없이 바로 착석 가능합니다.',
+        searchKey: 'Cervejaria Gazela Porto'
+      },
+      {
+        city: 'porto',
+        cityName: '포르투',
+        name: 'Lado B Café (라도 비)',
+        category: '정통 프란세지냐 (카페 산티아고 대안)',
+        noWaitReason: '줄이 길게 늘어서는 카페 산티아고 바로 맞은편! 매장이 훨씬 넓고 쾌적하며 현지인 평가도 대등하여 대기 거의 없음.',
+        bestMenu: '프란세지냐 이스페샬(반숙 계란 + 감자튀김 추가, 약 13€)',
+        tip: '맥주와 토마토 베이스의 진한 소스가 일품. 12시 오픈 직후나 14:30 방문 시 대기 0분.',
+        searchKey: 'Lado B Cafe Porto'
+      },
+      {
+        city: 'porto',
+        cityName: '포르투',
+        name: 'A Sandeira do Porto',
+        category: '아늑한 수제 샌드위치 & 수프',
+        noWaitReason: '테이블은 작지만 음식 준비와 회전이 매우 빠름. 11:30 오픈 직후나 오후 2~3시 방문 시 쾌적 착석.',
+        bestMenu: '훈제 연어/하몬 샌드위치 런치 세트(오늘의 수프 + 음료 포함 8€선)',
+        tip: '간단하고 부담 없는 점심을 원할 때 상벤투역 도보 3분 거리의 가성비 천국입니다.',
+        searchKey: 'A Sandeira do Porto'
+      },
+      {
+        city: 'seville',
+        cityName: '세비야',
+        name: 'El Rinconcillo (엘 린콘시요)',
+        category: '1670년 오픈 세비야 최고(最古)의 바',
+        noWaitReason: '2층 테이블은 예약 필수지만, 1층 스탠딩 바(Bar)는 분필로 바닥에 금액을 적으며 먹는 시스템이라 대기 없이 바로 입장!',
+        bestMenu: '하몬 이베리코(Jamón Ibérico) & 시금치 병아리콩(Espinacas con Garbanzos) & 셰리와인',
+        tip: '카운터 바에 자연스럽게 자리를 잡고 음료와 타파스 2개를 먼저 주문하세요.',
+        searchKey: 'El Rinconcillo Seville'
+      },
+      {
+        city: 'seville',
+        cityName: '세비야',
+        name: 'Bodega Santa Cruz (Las Columnas)',
+        category: '활기찬 정통 타파스 바',
+        noWaitReason: '세비야 대성당 도보 2분. 서서 먹는 야외 기둥 및 카운터 바로 직원이 1분 만에 타파스를 내어줍니다.',
+        bestMenu: '몬타디토(미니 바게트 샌드위치 3€ 내외) & 틴토 데 베라노(여름 와인)',
+        tip: '현지인들이 퇴근길에 가볍게 맥주 한잔하는 로컬 분위기를 100% 체험할 수 있습니다.',
+        searchKey: 'Bodega Santa Cruz Las Columnas'
+      },
+      {
+        city: 'seville',
+        cityName: '세비야',
+        name: 'Casa Morales (카사 모랄레스)',
+        category: '거대 와인 항아리 전통 타파스 (1850년)',
+        noWaitReason: '앞쪽 선술집 바와 뒤쪽 거대 와인 항아리 홀로 분리되어 있어 13:00 또는 20:00 오픈 시간 방문 시 대기 없이 착석.',
+        bestMenu: '소볼살 찜(Carrillada Ibérica) & 대구 타파스',
+        tip: '항아리 벽화 앞에서 와인 한 잔을 곁들이면 안달루시아의 클래식한 정취를 만끽할 수 있습니다.',
+        searchKey: 'Casa Morales Seville'
+      }
+    ];
+
+    // Render No-Wait Restaurants
+    function renderNoWaitRestaurants(filterCity = 'all') {
+      const container = document.getElementById('noWaitRestList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const filtered = filterCity === 'all' 
+        ? restaurantData 
+        : restaurantData.filter(r => r.city === filterCity);
+
+      filtered.forEach(r => {
+        let cityBadge = "bg-azulejo-100 text-azulejo-800";
+        if(r.city === 'porto') cityBadge = "bg-purple-100 text-purple-800";
+        if(r.city === 'seville') cityBadge = "bg-amber-100 text-amber-800";
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-50 rounded-xl p-3 border border-slate-200/90 hover:border-amber-400 transition space-y-2 text-xs";
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center space-x-1.5 mb-0.5">
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${cityBadge}">${r.cityName}</span>
+                <span class="text-[11px] text-slate-500 font-medium">${r.category}</span>
+              </div>
+              <h4 class="text-sm font-bold text-slate-900">${r.name}</h4>
+            </div>
+            <button onclick="copyRestName('${r.searchKey}', this)" class="text-[10px] bg-white border border-slate-300 hover:border-slate-500 text-slate-700 px-2 py-1 rounded-lg shadow-sm flex items-center gap-1 transition flex-shrink-0" title="지도 검색용 영문명 복사">
+              <span>📋</span>
+              <span>이름 복사</span>
+            </button>
+          </div>
+
+          <div class="bg-amber-50/80 p-2 rounded-lg border border-amber-200/70 text-[11px] text-amber-900">
+            <strong>⚡ 노웨이팅 비결:</strong> ${r.noWaitReason}
+          </div>
+
+          <div class="text-[11px] text-slate-600 space-y-0.5">
+            <p>• <strong>대표 메뉴:</strong> ${r.bestMenu}</p>
+            <p>• <strong>실전 팁:</strong> ${r.tip}</p>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Filter restaurant segments
+    function filterRestaurants(city) {
+      ['all', 'lisbon', 'porto', 'seville'].forEach(c => {
+        const btn = document.getElementById(`rf-${c}`);
+        if (btn) {
+          if (c === city) {
+            btn.className = "flex-1 py-1 rounded-lg bg-white shadow-sm text-slate-900 font-bold transition";
+          } else {
+            btn.className = "flex-1 py-1 rounded-lg text-slate-500 hover:text-slate-900 transition font-medium";
+          }
+        }
+      });
+      renderNoWaitRestaurants(city);
+    }
+
+    // Copy to clipboard helper
+    function copyRestName(text, btn) {
+      const tempInput = document.createElement('input');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = `<span class="text-emerald-700 font-bold">✓ 복사됨</span>`;
+      btn.classList.add('bg-emerald-50', 'border-emerald-300');
+
+      setTimeout(() => {
+        btn.innerHTML = originalHtml;
+        btn.classList.remove('bg-emerald-50', 'border-emerald-300');
+      }, 1500);
+    }
+
+    // Quick Search Logic
+    function toggleQuickSearch() {
+      const box = document.getElementById('quickSearchBox');
+      box.classList.toggle('hidden');
+      if (!box.classList.contains('hidden')) {
+        document.getElementById('searchInput').focus();
+      }
+    }
+    function clearSearch() {
+      document.getElementById('searchInput').value = "";
+      document.getElementById('searchResults').innerHTML = "";
+    }
+    function handleSearch(q) {
+      const query = q.trim().toLowerCase();
+      const resContainer = document.getElementById('searchResults');
+      if (!query) {
+        resContainer.innerHTML = '';
+        return;
+      }
+
+      // Keyword searchable items (Enhanced with No-Wait Restaurants)
+      const searchItems = [
+        { text: "소매치기 경보: 28번 트램, 로시우 광장, 백팩 앞으로, 스트랩", tab: "home" },
+        { text: "공항 우버 Kiss & Fly 2층 출국장 탑승 위치", tab: "survival" },
+        { text: "AP 133 기차: 캄파냐에서 상벤투역 무료 로컬열차 환승", tab: "itinerary" },
+        { text: "테일러 와이너리: 한국어 오디오 가이드, 20유로 3종 시음 + 4유로 올리브", tab: "docent" },
+        { text: "클레리구스 종탑 & 스피리투스(Spiritus) 미디어아트 조명 쇼", tab: "docent" },
+        { text: "포르투 5대 스냅촬영 스팟: 상벤투, 동루이스, 히베이라, 알마스, 모루정원", tab: "docent" },
+        { text: "세비야 대성당 & 콜럼버스 묘 & 히랄다 탑 35개 경사로", tab: "docent" },
+        { text: "에그타르트(나타) 해부학: 파브리카 데 나타, 시나몬+슈가 파우더", tab: "gourmet" },
+        { text: "포르투갈 4대 미식: 바칼라우, 아호스 드 마리스코, 프란세지냐, 포트와인", tab: "gourmet" },
+        { text: "⚡ 웨이팅ZERO 리스본: 아스 비파나스 두 아폰소(Bifana), 마리스케이하 두 리스(해산물)", tab: "gourmet" },
+        { text: "⚡ 웨이팅ZERO 포르투: 가젤라(Cachorrinho), 라도 비(프란세지냐)", tab: "gourmet" },
+        { text: "⚡ 웨이팅ZERO 세비야: 엘 린콘시요(1층 스탠딩 바), 라스 콜룸나스(타파스)", tab: "gourmet" },
+        { text: "대중교통: 728번(벨렝/오리엔트), 737번(상조르제성), 714번 버스", tab: "survival" },
+        { text: "스페인 광장: 48개 주 역사 타일 벤치와 수로 보트", tab: "docent" },
+        { text: "정통 플라멩코: 칸테, 사파테아도, 두엔데의 전율", tab: "docent" }
+      ];
+
+      const matches = searchItems.filter(item => item.text.toLowerCase().includes(query));
+      if (matches.length === 0) {
+        resContainer.innerHTML = `<div class="text-slate-400 p-2 text-center text-xs">검색 결과가 없습니다.</div>`;
+      } else {
+        resContainer.innerHTML = matches.map(m => `
+          <div onclick="switchTab('${m.tab}'); toggleQuickSearch();" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer flex justify-between items-center text-xs">
+            <span class="truncate pr-2">${m.text}</span>
+            <span class="text-[10px] bg-azulejo-700 text-white px-1.5 py-0.5 rounded flex-shrink-0">이동</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    // Initialize application
+    window.onload = function() {
+      renderTimeline('all');
+      renderNoWaitRestaurants('all');
+    };
+  </script>
+</body>
+</html>
