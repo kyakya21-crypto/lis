@@ -64,8 +64,6 @@
       animation: pulseGlow 2.5s infinite ease-in-out;
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased select-none font-sans" style="height:100vh;height:100dvh;overflow:hidden;">
 
@@ -714,9 +712,9 @@
             <span class="text-[10px] text-slate-500 font-medium">핀 · 경로 · 이동수단</span>
           </div>
           <div id="mapChips" class="flex gap-1.5 overflow-x-auto pb-1" style="scrollbar-width:none"></div>
-          <div id="mapBox" style="height:46vh;min-height:300px" class="rounded-xl overflow-hidden border border-slate-200 bg-slate-100"></div>
-          <div id="mapLegend" class="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-600"></div>
-          <p class="text-[10px] text-slate-400 leading-snug">핀 위치는 대략적이고, 경로선은 실제 도로가 아니라 개략 연결선이에요. 도보 시간은 직선거리로 추정한 값입니다. 정확한 길찾기는 각 구간의 '구글맵' 버튼을 쓰세요.</p>
+          <iframe id="mapFrame" title="일정 지도" class="w-full rounded-xl border border-slate-200 bg-slate-100" style="height:46vh;min-height:300px" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+          <div class="text-[10px] text-slate-600">장소 이름을 누르면 지도가 그 장소로 옮겨가요. 길은 구간 아래 🗺️ 구글맵 길찾기 버튼으로 확인하세요.</div>
+          <p class="text-[10px] text-slate-400 leading-snug">지도는 구글맵 화면이에요. 한 번에 한 장소만 보여줘서 경로선은 그리지 않아요. 이동 시간과 요금은 구간 카드에 있고, 실제 길은 구글맵 길찾기 버튼으로 보세요.</p>
         </div>
         <div id="mapPanel" class="space-y-2"></div>
       </section>
@@ -1461,9 +1459,11 @@
     function gmPinUrl(id) { return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(P[id].q)}`; }
     function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
 
-    // ---------- state ----------
-    let MAP = null, MAP_LAYER = null, MAP_MARKERS = {}, MAP_LEGLINES = [], mapView = 'all', mapReady = false;
-
+    // ---------- Map tab (Google Maps embed, no API key) ----------
+    let mapView = 'all';
+    const CITY_Q = { lisbon: 'Lisbon, Portugal', porto: 'Porto, Portugal', seville: 'Seville, Spain' };
+    function gEmbed(q, z) { return `https://maps.google.com/maps?q=${encodeURIComponent(q)}&t=m&z=${z || 14}&output=embed`; }
+    function setMapFrame(q, z) { const f = document.getElementById('mapFrame'); if (f) f.src = gEmbed(q, z); }
     function mapChips() {
       const chips = [{ v: 'all', l: '전체' }, { v: 'city:lisbon', l: '리스본' }, { v: 'city:porto', l: '포르투' }, { v: 'city:seville', l: '세비야' }]
         .concat(MAPDAYS.map(d => ({ v: 'day:' + d.day, l: `D${d.day} ${d.date.split(' ')[0]}` })));
@@ -1471,68 +1471,21 @@
         const on = c.v === mapView;
         return `<button onclick="selectMapView('${c.v}')" class="flex-shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full border ${on ? 'bg-azulejo-600 text-white border-azulejo-600' : 'bg-white text-slate-600 border-slate-200'}">${c.l}</button>`;
       }).join('');
-      const active = document.querySelector('#mapChips button.bg-azulejo-600');
-      if (active && active.scrollIntoView) { try { active.scrollIntoView({ inline: 'center', block: 'nearest' }); } catch (e) {} }
     }
-
-    function initMap() {
-      if (MAP || typeof L === 'undefined') return;
-      MAP = L.map('mapBox', { zoomControl: true, scrollWheelZoom: false });
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19, subdomains: 'abcd',
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-      }).addTo(MAP);
-      MAP_LAYER = L.layerGroup().addTo(MAP);
-    }
-
-    function markerHtml(label, kind) {
-      const k = KIND[kind] || KIND.sight;
-      return `<div style="background:${k.c};color:#fff;border:2px solid #fff;border-radius:999px;min-width:26px;height:26px;padding:0 5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;box-shadow:0 1px 4px rgba(0,0,0,.4)">${label}</div>`;
-    }
-
-    function addMarker(id, label, extra) {
-      if (!MAP) return;
-      const p = P[id];
-      const m = L.marker(p.ll, { icon: L.divIcon({ html: markerHtml(label, p.k), className: '', iconSize: [26, 26], iconAnchor: [13, 13] }) });
-      m.bindPopup(`<div style="font-size:12px;line-height:1.4"><b>${KIND[p.k].i} ${esc(p.n)}</b>${extra ? '<br>' + esc(extra) : ''}<br><a href="${gmPinUrl(id)}" target="_blank" rel="noopener">구글맵에서 열기</a></div>`);
-      m.addTo(MAP_LAYER);
-      MAP_MARKERS[id] = m;
-    }
-
-    function addLine(path, mode, tip, faint) {
-      if (!MAP) return null;
-      const m = MODE[mode];
-      const line = L.polyline(path, { color: m.color, weight: faint ? 3 : m.w, opacity: faint ? 0.45 : 0.9, dashArray: faint ? '4 8' : m.dash });
-      line.bindTooltip(tip, { sticky: true });
-      line.addTo(MAP_LAYER);
-      return line;
-    }
-
-    function fit(points) {
-      if (!MAP || !points.length) return;
-      MAP.fitBounds(L.latLngBounds(points), { padding: [28, 28], maxZoom: 15 });
-    }
-
     function selectMapView(v) {
       mapView = v;
       mapChips();
-      if (MAP_LAYER) MAP_LAYER.clearLayers();
-      MAP_MARKERS = {}; MAP_LEGLINES = [];
-      const modesUsed = new Set();
-      if (v === 'all') drawOverview(modesUsed);
+      if (v === 'all') drawOverview();
       else if (v.startsWith('city:')) drawCity(v.slice(5));
-      else drawDay(parseInt(v.slice(4), 10), modesUsed);
-      renderLegend(modesUsed);
-      if (MAP) setTimeout(() => MAP.invalidateSize(), 60);
+      else drawDay(parseInt(v.slice(4), 10));
     }
-
-    function drawOverview(modesUsed) {
-      const hubs = ['lis_air', 'lis_hotel', 'santa_apolonia', 'campanha', 'porto_apt', 'opo', 'svq', 'sev_hotel'];
-      const pts = [];
-      hubs.forEach(id => { addMarker(id, KIND[P[id].k].i); pts.push(P[id].ll); });
-      [['santa_apolonia', 'campanha', 'train', '11/11 AP 133 14:00 ➔ 16:48'], ['opo', 'svq', 'flight', '11/17 FR5467 07:35 ➔ 09:50'], ['svq', 'lis_air', 'flight', '11/20 TP1103 10:00 ➔ 10:05']]
-        .forEach(([a, b, mode, tip]) => { addLine(legPath(a, b, null, mode), mode, `${MODE[mode].icon} ${tip}`); modesUsed.add(mode); });
-      fit(pts);
+    function focusPlace(id) {
+      setMapFrame(P[id].q, 16);
+      const box = document.getElementById('mapFrame');
+      if (box && box.scrollIntoView) box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    function drawOverview() {
+      setMapFrame('Iberian Peninsula', 5);
       const hotels = [['lis_hotel', '11/8 ~ 11/11', '3박'], ['porto_apt', '11/11 ~ 11/17', '6박'], ['sev_hotel', '11/17 ~ 11/20', '3박']];
       const moves = [
         { d: 1, i: '✈️', t: '11/8(일) 인천 T2 12:00 ➔ 리스본 18:45', n: 'KE921, 도착은 예정' },
@@ -1547,20 +1500,17 @@
         </div>
         <div class="bg-white rounded-2xl border border-slate-200 p-3 space-y-2">
           <h4 class="text-xs font-bold text-slate-900">숙소 3곳 (12박)</h4>
-          ${hotels.map(h => `<div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100"><div><div class="text-[11px] font-bold text-slate-800">🏨 ${P[h[0]].n}</div><div class="text-[10px] text-slate-500">${h[1]} · ${h[2]}</div></div><a href="${gmPinUrl(h[0])}" target="_blank" rel="noopener" class="text-[10px] font-semibold px-2 py-1 rounded-full bg-azulejo-600 text-white flex-shrink-0">구글맵</a></div>`).join('')}
+          ${hotels.map(h => `<div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100"><button onclick="focusPlace('${h[0]}')" class="text-left"><div class="text-[11px] font-bold text-slate-800">🏨 ${P[h[0]].n}</div><div class="text-[10px] text-slate-500">${h[1]} · ${h[2]}</div></button><a href="${gmPinUrl(h[0])}" target="_blank" rel="noopener" class="text-[10px] font-semibold px-2 py-1 rounded-full bg-azulejo-600 text-white flex-shrink-0">구글맵</a></div>`).join('')}
         </div>`;
     }
-
     function drawCity(city) {
+      setMapFrame(CITY_Q[city], 12);
       const ids = Object.keys(P).filter(id => P[id].c === city);
-      const pts = [];
-      ids.forEach(id => { addMarker(id, KIND[P[id].k].i); pts.push(P[id].ll); });
-      fit(pts);
       const dayOf = {};
       MAPDAYS.forEach(d => d.seq.forEach(s => { (dayOf[s.id] = dayOf[s.id] || new Set()).add(d.day); }));
       document.getElementById('mapPanel').innerHTML = `
         <div class="bg-white rounded-2xl border border-slate-200 p-3 space-y-2">
-          <h4 class="text-xs font-bold text-slate-900">${CITY_LABEL[city]} 장소 ${ids.length}곳</h4>
+          <h4 class="text-xs font-bold text-slate-900">${CITY_LABEL[city]} 장소 ${ids.length}곳 · 누르면 지도에 표시</h4>
           ${ids.map(id => `
             <div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100">
               <button onclick="focusPlace('${id}')" class="text-left min-w-0">
@@ -1571,43 +1521,21 @@
             </div>`).join('')}
         </div>`;
     }
-
-    function drawDay(n, modesUsed) {
+    function drawDay(n) {
       const d = MAPDAYS.find(x => x.day === n);
       if (!d) return;
-      const pts = [];
-      const labels = {};
-      d.seq.forEach((s, i) => { (labels[s.id] = labels[s.id] || []).push(i + 1); });
-      Object.keys(labels).forEach(id => { addMarker(id, labels[id].join('·'), d.seq.find(s => s.id === id).d); pts.push(P[id].ll); });
-      const legRows = [];
-      d.seq.forEach((s, i) => {
-        if (!s.leg || i === 0) { legRows.push(null); return; }
-        const from = d.seq[i - 1].id, to = s.id, leg = s.leg;
-        const path = legPath(from, to, leg.via, leg.mode);
-        const mins = leg.mode === 'walk' ? (leg.t || `약 ${walkMinutes(from, to, leg.via)}분`) : leg.t;
-        const line = addLine(path, leg.mode, `${MODE[leg.mode].icon} ${MODE[leg.mode].label}${mins ? ' ' + mins : ''}`);
-        modesUsed.add(leg.mode);
-        path.forEach(pt => pts.push(pt));
-        MAP_LEGLINES[i] = { line, path };
-        (leg.alts || []).forEach(a => {
-          addLine(legPath(from, to, a.via, a.mode), a.mode, `대안: ${MODE[a.mode].icon} ${MODE[a.mode].label}${a.t ? ' ' + a.t : ''}`, true);
-          modesUsed.add(a.mode);
-        });
-        legRows.push({ from, to, leg, mins });
-      });
-      fit(pts);
-
-      const transport = (row, i) => {
-        const l = row.leg, m = MODE[l.mode];
-        const link = gmDirUrl(row.from, row.to, l.mode);
-        const alts = (l.alts || []).map(a => {
+      setMapFrame(P[d.seq[0].id].q, 13);
+      const transport = (from, to, leg) => {
+        const m = MODE[leg.mode];
+        const link = gmDirUrl(from, to, leg.mode);
+        const alts = (leg.alts || []).map(a => {
           const am = MODE[a.mode];
-          const al = gmDirUrl(row.from, row.to, a.mode);
+          const al = gmDirUrl(from, to, a.mode);
           return `<div class="mt-1 pl-2 border-l-2 border-slate-200 text-[10px] text-slate-600"><b>또는 ${am.icon} ${am.label}</b>${a.t ? ' · ' + a.t : ''}${a.c ? ' · ' + a.c : ''}${a.note ? '<br>' + a.note : ''}${al ? ` <a class="text-azulejo-700 font-semibold" href="${al}" target="_blank" rel="noopener">길찾기</a>` : ''}</div>`;
         }).join('');
-        return `<div onclick="focusLeg(${i})" class="ml-3 pl-3 py-1.5 border-l-4 text-[11px]" style="border-color:${m.color}">
-            <div class="font-bold text-slate-800">${m.icon} ${m.label}${row.mins ? ' · ' + row.mins : ''}${l.c ? ' · ' + l.c : ''}${l.mode === 'walk' && !l.t ? ' <span class="font-normal text-slate-400">(직선거리 기준 추정)</span>' : ''}</div>
-            ${l.note ? `<div class="text-slate-600 leading-snug">${l.note}</div>` : ''}
+        return `<div class="ml-3 pl-3 py-1.5 border-l-4 text-[11px]" style="border-color:${m.color}">
+            <div class="font-bold text-slate-800">${m.icon} ${m.label}${leg.t ? ' · ' + leg.t : ''}${leg.c ? ' · ' + leg.c : ''}</div>
+            ${leg.note ? `<div class="text-slate-600 leading-snug">${leg.note}</div>` : ''}
             ${alts}
             ${link ? `<a href="${link}" target="_blank" rel="noopener" class="inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-azulejo-600 text-white">🗺️ 구글맵 길찾기</a>` : ''}
           </div>`;
@@ -1634,42 +1562,16 @@
         </div>
         ${(d.pre || []).map(r => note(r, 'bg-amber-50 border border-amber-200 text-amber-900')).join('')}
         <div class="space-y-0">
-          ${d.seq.map((s, i) => (legRows[i] ? transport(legRows[i], i) : '') + stop(s, i)).join('')}
+          ${d.seq.map((s, i) => {
+            const prev = i > 0 ? d.seq[i - 1] : null;
+            const legHtml = (s.leg && prev) ? transport(prev.id, s.id, s.leg) : '';
+            return legHtml + stop(s, i);
+          }).join('')}
         </div>
         ${(d.post || []).map(r => note(r, 'bg-slate-50 border border-slate-200 text-slate-700')).join('')}`;
     }
-
-    function renderLegend(modesUsed) {
-      const keys = [...modesUsed];
-      document.getElementById('mapLegend').innerHTML = keys.length
-        ? keys.map(k => `<span class="inline-flex items-center gap-1"><span style="display:inline-block;width:16px;height:0;border-top:${MODE[k].dash ? '3px dashed' : '4px solid'} ${MODE[k].color}"></span>${MODE[k].icon} ${MODE[k].label}</span>`).join('') + '<span class="text-slate-400">연한 점선은 대안 경로</span>'
-        : '<span class="text-slate-400">핀을 누르면 설명과 구글맵 링크가 열려요.</span>';
-    }
-
-    function focusPlace(id) {
-      if (MAP && MAP_MARKERS[id]) { MAP.flyTo(P[id].ll, Math.max(MAP.getZoom(), 15), { duration: 0.6 }); MAP_MARKERS[id].openPopup(); }
-      const box = document.getElementById('mapBox');
-      if (box && box.scrollIntoView) box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    function focusLeg(i) {
-      const l = MAP_LEGLINES[i];
-      if (MAP && l) { MAP.fitBounds(L.latLngBounds(l.path), { padding: [40, 40], maxZoom: 16 }); }
-    }
-
-    function onMapShown() {
-      setTimeout(() => {
-        initMap();
-        if (!MAP) {
-          document.getElementById('mapBox').innerHTML = '<div class="h-full flex items-center justify-center text-center text-[11px] text-slate-500 p-4">지도 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인해 주세요. 아래 목록과 구글맵 링크는 그대로 쓸 수 있어요.</div>';
-        }
-        selectMapView(mapView);
-        mapReady = true;
-      }, 60);
-    }
-    function openDayMap(n) {
-      mapView = 'day:' + n;
-      switchTab('map');
-    }
+    function openDayMap(n) { mapView = 'day:' + n; switchTab('map'); }
+    function onMapShown() { selectMapView(mapView); }
 
     // ---------- Trip tools: today card, address cards, bookings, checklist, expenses ----------
     const TRIP = { startISO: '2026-11-08', endISO: '2026-11-20' };
