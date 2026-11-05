@@ -64,6 +64,8 @@
       animation: pulseGlow 2.5s infinite ease-in-out;
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased select-none font-sans min-h-screen">
 
@@ -112,6 +114,8 @@
       <!-- TAB 1: 🌟 QUICK CHEAT SHEET (Home) -->
       <section id="tab-home" class="tab-panel space-y-4">
         
+        <div id="todayCard"></div>
+
         <!-- Hero Visual Banner -->
         <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-azulejo-900 via-azulejo-700 to-amber-600 text-white p-4 shadow-lg">
           <div class="absolute -right-4 -bottom-4 w-28 h-28 opacity-20 bg-white rounded-full"></div>
@@ -132,7 +136,7 @@
               </div>
               <div class="bg-white/10 backdrop-blur-sm rounded-xl py-1.5 px-1">
                 <span class="block text-[10px] text-slate-200">포르투 거점</span>
-                <span class="text-xs font-bold text-amber-300">상벤투 에어비앤비</span>
+                <span class="text-xs font-bold text-amber-300">HM Infante 리버사이드</span>
               </div>
               <div class="bg-white/10 backdrop-blur-sm rounded-xl py-1.5 px-1">
                 <span class="block text-[10px] text-slate-200">세비야 거점</span>
@@ -140,6 +144,34 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Flight Summary Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 space-y-2.5">
+          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">✈️ 항공편 한눈에 보기</h3>
+          <div class="space-y-2 text-[11px] leading-snug">
+            <div class="bg-azulejo-50 border border-azulejo-100 rounded-lg px-2.5 py-2">
+              <div class="font-bold text-azulejo-800">11/8(일) · KE921 대한항공</div>
+              <div class="text-slate-700">인천 T2 12:00 ➔ 리스본 T1 18:45 <span class="text-amber-600">(도착은 예정)</span></div>
+              <div class="text-slate-500">비행 약 15시간 45분 · 온라인 체크인은 출발 48시간 전(11/6 12:00경) 오픈</div>
+            </div>
+            <div class="bg-azulejo-50 border border-azulejo-100 rounded-lg px-2.5 py-2">
+              <div class="font-bold text-azulejo-800">11/17(화) · FR5467 라이언에어</div>
+              <div class="text-slate-700">포르투 07:35 ➔ 세비야 09:50</div>
+              <div class="text-slate-500">비행 1시간 15분 · 05:00 볼트 예약 · 예약번호 C26F4J</div>
+            </div>
+            <div class="bg-azulejo-50 border border-azulejo-100 rounded-lg px-2.5 py-2">
+              <div class="font-bold text-azulejo-800">11/20(금) · TP1103 TAP <span class="text-amber-600">(시간 변경)</span></div>
+              <div class="text-slate-700">세비야 10:00 ➔ 리스본 10:05</div>
+              <div class="text-slate-500">비행 1시간 05분 · 07:00경 호텔 출발 · 예약번호 YTJJ2G</div>
+            </div>
+            <div class="bg-azulejo-50 border border-azulejo-100 rounded-lg px-2.5 py-2">
+              <div class="font-bold text-azulejo-800">11/20(금) · KE922 대한항공</div>
+              <div class="text-slate-700">리스본 T1 21:40 ➔ 인천 11/21(토) 20:00 <span class="text-amber-600">(도착은 예정)</span></div>
+              <div class="text-slate-500">비행 약 13시간 20분 · 리스본 대기 약 11시간 30분 · 짐은 리스본에서 재체크인</div>
+            </div>
+          </div>
+          <p class="text-[10px] text-slate-400 leading-snug">모두 현지 시각 기준입니다. 시차는 한국이 리스본·포르투보다 9시간, 세비야보다 8시간 빠릅니다. FR5467·TP1103 시각은 예약 앱 화면 기준이고, 대한항공 시각은 공개 동계 시간표 기준 예정입니다(KE921은 한 시간 앞당겨진 12:00 출발로 확정). 출발 전 항공사 앱에서 다시 확인하세요.</p>
         </div>
 
         <!-- Emergency & Critical Alerts Grid -->
@@ -181,16 +213,16 @@
                   ✈️
                 </div>
                 <div>
-                  <h4 class="text-xs font-bold text-slate-900">리스본 공항 우버 탑승 위치 (필독)</h4>
-                  <p class="text-[11px] text-azulejo-600 font-medium">1층 입국장 탑승 불가 ➔ 2층 출국장 'Kiss & Fly'</p>
+                  <h4 class="text-xs font-bold text-slate-900">리스본 공항 우버·볼트 탑승 위치 (필독)</h4>
+                  <p class="text-[11px] text-azulejo-600 font-medium">입국장 북쪽 단기주차장 1층 'P2' (스타벅스 지나서)</p>
                 </div>
               </div>
               <span id="card-uber-arrow" class="text-slate-400 text-xs">▼</span>
             </div>
             <div id="card-uber" class="hidden mt-3 pt-2.5 border-t border-slate-100 text-xs text-slate-600 space-y-1.5 bg-blue-50/50 p-2.5 rounded-lg">
-              <p>• <strong>이유:</strong> 1층 도착층에는 택시/우버 일반 픽업이 금지되어 기사님이 취소할 수 있습니다.</p>
-              <p>• <strong>이동 경로:</strong> 짐을 찾고 에스컬레이터를 타고 <strong>2층 출국장(Departures)</strong> 외부 <strong>'Kiss & Fly' 구역</strong>으로 이동 후 호출하세요.</p>
-              <p>• <strong>요금/시간:</strong> 시내(로시우)까지 약 10~15유로, 20~30분 소요 (2인 이상이거나 짐 많을 때 강력 추천).</p>
+              <p>• <strong>바뀐 점:</strong> 예전에는 출국장 'Kiss & Fly'에서 탔지만 2023년 6월에 지정 승차장으로 옮겨졌습니다. 오래된 블로그 글과 다를 수 있어요.</p>
+              <p>• <strong>이동 경로:</strong> 입국장을 나와 왼쪽(북쪽)으로 가면 스타벅스 바로 뒤에 <strong>'pré-reservas online'</strong> 파란 표지판이 보이고, 단기주차장 <strong>P2 1층</strong>이 우버·볼트 유일한 승차장입니다. 앱에 뜨는 핀 위치도 꼭 확인하세요.</p>
+              <p>• <strong>요금/시간:</strong> 시내(로시우)까지 약 7~15유로, 20~30분. 피크 시간엔 기사 배정이 늦거나 취소될 수 있어요. 자세한 경로는 [이동] 탭의 '구간별 이동 가이드' 참고.</p>
             </div>
           </div>
 
@@ -675,13 +707,80 @@
       </section>
 
       <!-- TAB 5: 🚨 교통 & 생존 치트키 (Transport & Safety) -->
+      <section id="tab-map" class="tab-panel hidden space-y-3">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">🗺️ 일정 지도</h3>
+            <span class="text-[10px] text-slate-500 font-medium">핀 · 경로 · 이동수단</span>
+          </div>
+          <div id="mapChips" class="flex gap-1.5 overflow-x-auto pb-1" style="scrollbar-width:none"></div>
+          <div id="mapBox" style="height:46vh;min-height:300px" class="rounded-xl overflow-hidden border border-slate-200 bg-slate-100"></div>
+          <div id="mapLegend" class="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-600"></div>
+          <p class="text-[10px] text-slate-400 leading-snug">핀 위치는 대략적이고, 경로선은 실제 도로가 아니라 개략 연결선이에요. 도보 시간은 직선거리로 추정한 값입니다. 정확한 길찾기는 각 구간의 '구글맵' 버튼을 쓰세요.</p>
+        </div>
+        <div id="mapPanel" class="space-y-2"></div>
+      </section>
+
+      <section id="tab-tools" class="tab-panel hidden space-y-3">
+        <div id="toolsTabs" class="flex gap-1.5 overflow-x-auto pb-1" style="scrollbar-width:none"></div>
+        <div id="toolsBody"></div>
+      </section>
+
       <section id="tab-survival" class="tab-panel hidden space-y-4">
+
+        <!-- Travel tips -->
+        <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm space-y-2">
+          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">💡 여행 팁 모음</h3>
+          <div class="space-y-2 text-[11px] text-slate-700 leading-relaxed">
+            <div><strong>🛡️ 안전</strong>
+              <p>• 소매치기는 리스본 28번 트램과 포르투 상벤투역 주변에 많아요. 가방은 몸 앞으로 메고, 여권과 현금은 안쪽 주머니에 나눠 넣으세요.</p>
+              <p>• 유럽 공통 긴급전화는 <strong>112</strong>예요. 한국 대사관 연락처도 메모해 두세요.</p>
+              <p>• 여권 사진과 예약 화면은 휴대폰과 메일에 같이 저장하세요.</p>
+            </div>
+            <div><strong>🩺 건강</strong>
+              <p>• 두통약, 소화제, 지사제, 밴드 정도를 챙기세요. 복용 중인 약은 영문 처방전이나 약 이름 메모를 가져가세요.</p>
+              <p>• 포르투는 경사가 심하고 돌길이 많아서 쿠션 있는 편한 운동화가 좋아요.</p>
+              <p>• 리스본과 포르투의 수돗물은 보통 마실 수 있어요. 민감하시면 생수를 사세요.</p>
+            </div>
+            <div><strong>🍽️ 현지 예절과 생활</strong>
+              <p>• 팁은 의무가 아니에요. 식당에서는 5~10% 정도나 잔돈 반올림이 흔해요. 스페인도 비슷해요.</p>
+              <p>• 일요일과 공휴일에는 가게가 닫는 곳이 많아요. 세비야의 작은 가게는 오후 2~5시 사이에 쉬기도 해요.</p>
+              <p>• 점심은 보통 13~15시, 저녁은 20시 이후에 먹어요. 이른 시간에는 식당이 한산할 수 있어요.</p>
+            </div>
+            <div><strong>⏰ 시간 관리</strong>
+              <p>• 구글맵 오프라인 지도가 받아졌는지, 비행기 모드에서 길찾기가 되는지 출발 전에 한 번 테스트하세요.</p>
+              <p>• 시차 때문에 헷갈리기 쉬우니 알람 이름에 한국 시간과 현지 시간을 같이 적어두세요.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lisbon transit payment -->
+        <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm space-y-2">
+          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">💳 리스본 대중교통 결제 요령</h3>
+          <div class="space-y-1.5 text-[11px] text-slate-700 leading-relaxed">
+            <p>• <strong>방법:</strong> 컨택리스(탭) 되는 Visa·Mastercard 카드나 폰(Apple Pay 등)을 단말기에 태그하면 돼요. 표를 따로 살 필요가 없어요.</p>
+            <p>• <strong>메트로 1.92€:</strong> 탈 때와 나올 때 모두 같은 카드·폰으로 태그해요. 한 번 타면 노선을 갈아타도 1회 요금이고, 지갑째 대지 말고 쓸 카드만 꺼내세요. 한 카드로 두 사람 몫은 안 돼서 1인 1카드·폰이 필요해요.</p>
+            <p>• <strong>버스 2.30€ · 트램 3.30€:</strong> 탈 때 앞쪽 노란 단말기에 한 번 태그해요. 트램 28번은 3.30€로 비싼 편이에요. 15E의 일부 긴 트램은 은행카드가 안 되니 현금이나 네베간테 카드를 쓰세요.</p>
+            <p>• <strong>네베간테 카드(0.5€) + 충전:</strong> 어느 수단이든 1.72€라 더 싸지만, 횟수가 적으면 카드 태그가 훨씬 편하고 차이는 몇 유로예요. 이 일정은 대중교통을 적게 타서 카드 태그를 추천해요.</p>
+            <p>• 은행에서 오는 승인 알림 금액은 최종 요금이 아니고, 이동이 끝난 뒤 보통 하룻밤 뒤에 확정돼요. 근교 버스·일부 노선은 카드 태그가 안 되니 해당 구간은 현장에서 확인하세요.</p>
+          </div>
+        </div>
+
+        <!-- Transit Legs Guide -->
+        <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">🧭 구간별 이동 가이드</h3>
+            <span class="text-[10px] text-slate-500 font-medium">호텔 ↔ 공항·역 · 환승 · 지도</span>
+          </div>
+          <p class="text-[10px] text-slate-500 leading-snug">요금은 2026년 자료 기준 대략값이고, 지도 링크는 구글맵으로 열립니다. 시각표와 요금은 출발 전에 한 번 더 확인하세요.</p>
+          <div id="legList" class="space-y-2"></div>
+        </div>
         
         <!-- Airport to City Comparison Table -->
         <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm space-y-2.5">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">공항 ➔ 시내 이동 수단 총정리</h3>
-            <span class="text-[10px] text-azulejo-600 font-bold">e-gate 자동심사 가능</span>
+            <span class="text-[10px] text-amber-600 font-bold">입국심사 지연 가능 (EES)</span>
           </div>
 
           <div class="space-y-2 text-xs">
@@ -689,12 +788,12 @@
             <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start justify-between">
               <div>
                 <strong class="text-slate-900">🚇 지하철 (메트로)</strong>
-                <p class="text-[11px] text-slate-500 mt-0.5">레드라인 탑승 ➔ 알라메다역 환승 ➔ 로시우역</p>
-                <p class="text-[11px] text-slate-600 font-medium mt-1">네베간테 카드(보증금 0.5€), 24시간권 6.8€ 추천</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">레드라인 탑승 ➔ 알라메다역 환승 ➔ 그린라인 로시우역</p>
+                <p class="text-[11px] text-slate-600 font-medium mt-1">교통카드 없이 신용카드 태그 1.92€, 네베간테 카드(0.5€) 충전 시 1.72€</p>
               </div>
               <div class="text-right flex-shrink-0 ml-2">
-                <span class="font-bold text-slate-800">1.8€</span>
-                <span class="block text-[10px] text-slate-400">약 35분</span>
+                <span class="font-bold text-slate-800">1.92€</span>
+                <span class="block text-[10px] text-slate-400">약 25~30분</span>
               </div>
             </div>
 
@@ -702,12 +801,12 @@
             <div class="p-2.5 rounded-xl bg-blue-50 border border-blue-200 flex items-start justify-between">
               <div>
                 <strong class="text-azulejo-900">🚕 우버 / 볼트 (2인+ 추천)</strong>
-                <p class="text-[11px] text-azulejo-700 mt-0.5">2층 출국장 'Kiss & Fly' 구역에서 탑승 필수</p>
+                <p class="text-[11px] text-azulejo-700 mt-0.5">입국장 북쪽 단기주차장 P2 1층에서 탑승</p>
                 <p class="text-[11px] text-slate-600 font-medium mt-1">도어 투 도어로 숙소 앞 바로 도착, 피로도 최소화</p>
               </div>
               <div class="text-right flex-shrink-0 ml-2">
-                <span class="font-bold text-azulejo-800">10~15€</span>
-                <span class="block text-[10px] text-slate-500">약 25분</span>
+                <span class="font-bold text-azulejo-800">7~15€</span>
+                <span class="block text-[10px] text-slate-500">약 20~30분</span>
               </div>
             </div>
 
@@ -784,30 +883,41 @@
     </main>
 
     <!-- BOTTOM FIXED NAVIGATION BAR -->
+    <div id="showOverlay" class="hidden fixed inset-0 z-50 bg-white p-5 overflow-y-auto"></div>
+
     <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 z-40 px-2 py-1.5 flex justify-around items-center shadow-lg">
-      <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center py-1 px-2 text-azulejo-600 transition tap-highlight-transparent">
+      <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center py-1 px-1 text-azulejo-600 transition tap-highlight-transparent">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
         <span class="text-[10px] font-bold mt-0.5">치트키</span>
       </button>
 
-      <button onclick="switchTab('itinerary')" id="nav-itinerary" class="nav-btn flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
+      <button onclick="switchTab('itinerary')" id="nav-itinerary" class="nav-btn flex flex-col items-center py-1 px-1 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-        <span class="text-[10px] font-semibold mt-0.5">13일 일정</span>
+        <span class="text-[10px] font-semibold mt-0.5">일정</span>
       </button>
 
-      <button onclick="switchTab('docent')" id="nav-docent" class="nav-btn flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
+      <button onclick="switchTab('map')" id="nav-map" class="nav-btn flex flex-col items-center py-1 px-1 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span class="text-[10px] font-semibold mt-0.5">지도</span>
+      </button>
+
+      <button onclick="switchTab('docent')" id="nav-docent" class="nav-btn flex flex-col items-center py-1 px-1 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-        <span class="text-[10px] font-semibold mt-0.5">도슨트 해설</span>
+        <span class="text-[10px] font-semibold mt-0.5">도슨트</span>
       </button>
 
-      <button onclick="switchTab('gourmet')" id="nav-gourmet" class="nav-btn flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
+      <button onclick="switchTab('gourmet')" id="nav-gourmet" class="nav-btn flex flex-col items-center py-1 px-1 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-        <span class="text-[10px] font-semibold mt-0.5">미식·쇼핑</span>
+        <span class="text-[10px] font-semibold mt-0.5">미식</span>
       </button>
 
-      <button onclick="switchTab('survival')" id="nav-survival" class="nav-btn flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
+      <button onclick="switchTab('survival')" id="nav-survival" class="nav-btn flex flex-col items-center py-1 px-1 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-        <span class="text-[10px] font-semibold mt-0.5">교통·안전</span>
+        <span class="text-[10px] font-semibold mt-0.5">교통</span>
+      </button>
+      <button onclick="switchTab('tools')" id="nav-tools" class="nav-btn flex flex-col items-center py-1 px-1 text-slate-400 hover:text-slate-600 transition tap-highlight-transparent">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span class="text-[10px] font-semibold mt-0.5">도구</span>
       </button>
     </nav>
 
@@ -862,24 +972,1033 @@
 
   <!-- JavaScript Application Logic -->
   <script>
+
+    // ---------- Transit legs (hotel <-> hubs, transfers, map links) ----------
+    const MAPS = {
+      dir: (o, d, mode) => `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(o)}&destination=${encodeURIComponent(d)}&travelmode=${mode || 'transit'}`,
+      pin: (q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`
+    };
+    const PLACE = {
+      lisAirport: "Aeroporto Humberto Delgado, Lisboa",
+      lisHotel: "38.712392,-9.139098",
+      lisHotelName: "Rossio Plaza Hotel, Rua do Ouro 266, Lisboa",
+      santaApolonia: "Estação de Santa Apolónia, Lisboa",
+      campanha: "Estação de Porto Campanhã",
+      saoBento: "Estação de São Bento, Porto",
+      portoApt: "41.14106,-8.61428",
+      portoAptName: "HM Infante Riverside Apartment, Rua do Infante Dom Henrique 45, Porto",
+      opo: "Aeroporto Francisco Sá Carneiro, Porto",
+      svq: "Aeropuerto de Sevilla San Pablo",
+      svqHotel: "Soho Boutique Catedral, Avenida de la Constitución 8, Sevilla"
+    };
+
+    const transitLegs = [
+      {
+        id: "leg-a", date: "11/8 (일)", short: "리스본 공항 ➔ 호텔",
+        title: "리스본 공항 ➔ Rossio Plaza Hotel",
+        summary: "KE921 도착 18:45(예정) · 메트로 약 25~30분 / 우버·볼트 약 20~30분",
+        steps: [
+          "입국심사: 첫 입국이라 지문·얼굴 등록(EES) 줄이 길 수 있어요. 공항 상황에 따라 30~90분을 잡아두세요.",
+          "짐을 찾고 입국장 출구로 나오면 오른쪽이 메트로 입구, 정면이 택시, 왼쪽(북쪽)이 우버·볼트 승차장입니다.",
+          "호텔 주소는 Rua do Ouro 266(Rua Áurea 266로 표기되기도 함). 산타 주스타 엘리베이터 바로 옆이고, 체크인은 15:00~23:30, 프런트는 24시간입니다.",
+          "호텔이 보행자 위주 거리라 차가 정문 앞까지 못 들어갈 수 있어요. 앱 핀 근처에서 내려 짧게 걸어가는 경우를 생각해두세요."
+        ],
+        options: [
+          { name: "🚇 메트로", cost: "1.92€ (카드 태그) · 1.72€ (네베간테)", time: "25~30분", note: "Aeroporto(레드 라인 시작역) ➔ Alameda에서 그린 라인(Cais do Sodré 방면)으로 환승 ➔ Martim Moniz ➔ Rossio(2정거장) ➔ 도보 3~5분. 환승해도 요금은 1회분이고 운행은 06:30~01:00입니다." },
+          { name: "🚕 우버·볼트", cost: "약 7~15€ (볼트가 보통 더 저렴)", time: "20~30분", note: "승차장은 단기주차장 P2 1층(스타벅스 지나 'pré-reservas online' 표지판). 피크 시간엔 기사 배정이 늦을 수 있어요. 앱을 한국에서 미리 설치·로그인해두세요." },
+          { name: "🚖 택시", cost: "12~15€ + 짐 1.6€", time: "20~25분", note: "승차장 줄에서 탑승하고 미터기를 켜달라고 하세요. 21시 이후엔 20% 할증이 붙습니다. 호텔 주소를 메모해서 보여주면 편해요." }
+        ],
+        tips: [
+          "장거리 비행 뒤 짐이 있고 두 명이라면 우버·볼트나 택시가 편하고, 메트로와 비교해도 1인당 몇 유로 차이입니다.",
+          "호텔 공항 셔틀은 방당 60€라 추천하지 않아요."
+        ],
+        maps: [
+          { label: "공항 ➔ 호텔 (대중교통)", url: () => MAPS.dir(PLACE.lisAirport, PLACE.lisHotel, 'transit') },
+          { label: "우버 승차장 P2 위치", url: () => MAPS.pin("Aeroporto de Lisboa P2 parque estacionamento") },
+          { label: "호텔 위치", url: () => MAPS.pin(PLACE.lisHotelName) }
+        ]
+      },
+      {
+        id: "leg-b", date: "11/11 (수)", short: "호텔 ➔ 산타 아폴로니아역",
+        title: "Rossio Plaza Hotel ➔ 산타 아폴로니아역 (AP 133 14:00)",
+        summary: "13:00 호텔 출발 · 우버·볼트 10~15분 / 메트로 블루 라인 약 20분",
+        steps: [
+          "CP 예약 화면 기준 승차역은 Lisboa Santa Apolónia, 하차역은 Porto Campanhã입니다. AP 133은 14:00 출발, 16:48 도착(2시간 48분)으로 알고 있으니 앱의 'View train details'에서 시각을 한 번 확인하세요.",
+          "호텔 체크아웃은 12:00. 이후 쇼핑을 하고 짐은 프런트에 맡겨둘 수 있어요.",
+          "13:00에 출발해 13:30까지 역에 도착하고, 전광판에서 AP 133 승강장을 확인합니다. 티켓에는 객차(Carruagem) 1, 좌석(Lugar) 11·12로 적혀 있는지 보세요."
+        ],
+        options: [
+          { name: "🚕 우버·볼트", cost: "약 4~8€", time: "10~15분", note: "짐이 있을 때 가장 편해요. 역 앞에서 내려 출발 전광판 방향으로 이동하면 됩니다." },
+          { name: "🚇 메트로 (블루 라인)", cost: "1.92€ (카드 태그)", time: "약 20분", note: "호텔에서 Baixa-Chiado역까지 도보 약 5분 ➔ 블루 라인 Santa Apolónia 방면 ➔ 종점 Santa Apolónia(Terreiro do Paço 다음 정거장). 계단·에스컬레이터가 있어 큰 짐엔 번거로울 수 있어요." },
+          { name: "🚶 도보", cost: "무료", time: "약 35~40분", note: "알파마 쪽 오르막이 있어 짐이 있으면 추천하지 않아요." }
+        ],
+        tips: [
+          "프로모 티켓(Bilhete Promo)은 지정 열차 전용이니 놓치지 않게 13:30까지 역에 도착하세요.",
+          "포르투갈 열차는 좌석 지정이 필수라 앞뒤로 앉지 말고 티켓 좌석으로 앉으세요."
+        ],
+        maps: [
+          { label: "호텔 ➔ 산타 아폴로니아 (대중교통)", url: () => MAPS.dir(PLACE.lisHotel, PLACE.santaApolonia, 'transit') },
+          { label: "호텔 ➔ 산타 아폴로니아 (차량)", url: () => MAPS.dir(PLACE.lisHotel, PLACE.santaApolonia, 'driving') }
+        ]
+      },
+      {
+        id: "leg-c", date: "11/11 (수)", short: "캄파냐역 ➔ 포르투 숙소",
+        title: "포르투 캄파냐역 ➔ HM Infante Riverside Apt",
+        summary: "16:48 도착 · 근교열차 4~5분 + 도보 9분 / 우버·볼트 약 10분",
+        steps: [
+          "기차에서 내리면 'Urbanos / São Bento' 표지판을 따라 다른 승강장으로 이동합니다. 승강장 사이에 에스컬레이터가 있어요.",
+          "São Bento 행 근교열차(Urbano)는 5~15분 간격이고 4~5분 걸립니다. 장거리 티켓이 있으면 도착 후 1시간 안에 추가 요금 없이 탈 수 있어요. 왼쪽 창가에 앉으면 두루 강과 철교가 잘 보입니다.",
+          "São Bento역에서 숙소까지는 도보 약 9분, 내리막 돌길입니다. 숙소는 Rua do Infante Dom Henrique 45로 히베이라 광장에서 2분 거리예요.",
+          "체크인은 16:00~23:30. 키 수령 방식은 호스트에게 도착 예정 시간(약 17:30)과 함께 미리 확인해두세요."
+        ],
+        options: [
+          { name: "🚆 근교열차 + 도보", cost: "AP 티켓 소지 시 무료", time: "약 20분", note: "돌길에서 캐리어 바퀴 소리가 큽니다. 내리막이라 힘은 덜 들어요." },
+          { name: "🚕 우버·볼트·택시", cost: "대략 5~10€ (앱에서 확인)", time: "약 10분", note: "캄파냐역 출구 앞에 택시 승차장이 있어요. 숙소가 있는 거리 앞까지 차가 들어가는지는 앱 핀으로 확인하세요." }
+        ],
+        tips: [
+          "AP 열차는 객차 번호별로 정차 위치가 달라서, 내린 뒤 승강장에서 출구 표지판을 먼저 찾으면 헤매지 않아요.",
+          "숙소에서 São Bento역은 걸어서 닿는 거리라 이후 근교(브라가·기마랑이스) 이동도 São Bento에서 시작하면 편합니다."
+        ],
+        maps: [
+          { label: "캄파냐 ➔ 숙소 (대중교통)", url: () => MAPS.dir(PLACE.campanha, PLACE.portoApt, 'transit') },
+          { label: "São Bento ➔ 숙소 (도보)", url: () => MAPS.dir(PLACE.saoBento, PLACE.portoApt, 'walking') },
+          { label: "숙소 위치", url: () => MAPS.pin(PLACE.portoAptName) }
+        ]
+      },
+      {
+        id: "leg-d", date: "11/17 (화)", short: "포르투 숙소 ➔ 공항",
+        title: "HM Infante ➔ 포르투 공항 (FR5467 07:35)",
+        summary: "05:00 볼트 예약 완료 · 픽업은 숙소 옆 Bolsa dos Comerciantes 앞",
+        steps: [
+          "볼트 예약 화면 기준 05:00 픽업입니다. 픽업 지점은 Bolsa dos Comerciantes(Rua do Infante Dom Henrique 47–53)로, 숙소(45번) 바로 옆이에요.",
+          "기사 정보는 픽업 직전에야 앱에 공유됩니다. 04:45에 앱을 열어 기사 배정과 차량 번호를 확인하세요.",
+          "05:00에 출발하면 05:25~05:35 공항 도착이라 07:35 비행까지 2시간쯤 여유가 있어요. 취소되더라도 다른 수단으로 바꿀 시간은 충분합니다.",
+          "라이언에어 모바일 탑승권과 온라인 체크인은 전날 미리 끝내두세요."
+        ],
+        options: [
+          { name: "📱 볼트 (예약 완료)", cost: "예약 화면에서 확인", time: "15~30분", note: "예약 기사가 취소하는 경우가 있어서 04:45에 배정 상태를 확인하고, 안 잡히면 바로 일반 호출로 바꾸세요." },
+          { name: "🚖 예비: 우버·택시", cost: "대략 10~20€", time: "15~30분", note: "우버 앱을 같이 설치해두면 바로 갈아탈 수 있고, 호스트에게 택시 호출을 부탁해둘 수도 있어요." },
+          { name: "🚐 예비: 프라이빗 사전 예약", cost: "고정가 약 35~50€", time: "20~30분", note: "가장 확실하지만 비용이 높아서 볼트가 불안할 때만 고르세요." }
+        ],
+        tips: [
+          "메트로는 시내 첫차가 06:00경이라 07:35 비행에는 쓸 수 없어요.",
+          "세비야는 포르투갈보다 1시간 빠르니 도착 시계를 +1시간으로 맞추세요."
+        ],
+        maps: [
+          { label: "픽업 지점 위치", url: () => MAPS.pin("Bolsa dos Comerciantes do Porto, Rua do Infante Dom Henrique 47-53, Porto") },
+          { label: "숙소 ➔ 포르투 공항 (차량)", url: () => MAPS.dir(PLACE.portoApt, PLACE.opo, 'driving') },
+          { label: "포르투 공항 위치", url: () => MAPS.pin(PLACE.opo) }
+        ]
+      },
+      {
+        id: "leg-e", date: "11/17 (화)", short: "세비야 공항 ➔ 호텔",
+        title: "세비야 공항 ➔ Soho Boutique Catedral",
+        summary: "09:50 도착 · 택시 고정요금 약 26€ / EA 버스 6€ + 도보",
+        steps: [
+          "포르투갈에서 스페인으로 오는 쉥겐 구간이라 별도 입국심사는 없어요. 짐을 찾아 도착홀 밖으로 나옵니다.",
+          "호텔은 Av. de la Constitución 8, 대성당 바로 옆 보행자·트램 거리입니다. 일부 사이트에서는 이름이 'Petit Palace Catedral (구 Soho Boutique Catedral)'로 표시돼요.",
+          "체크인은 14:00부터라 09:50 도착이면 짐부터 맡기는 흐름이 됩니다. 호텔에서 도착 예정 시간을 미리 알려달라고 안내하니 연락해두세요."
+        ],
+        options: [
+          { name: "🚖 택시 (고정요금)", cost: "26€ (평일 낮) · 29€ (야간·휴일)", time: "20~30분", note: "도착홀 앞 승강장에서 탑승합니다. 보행자 거리라 호텔 문 앞까지 못 들어갈 수 있으니 기사에게 호텔 주소와 'Puerta de Jerez 근처'를 알려주세요." },
+          { name: "🚌 EA 공항버스", cost: "편도 6€ (기사에게 현금·카드)", time: "약 35분", note: "Santa Justa ➔ San Bernardo ➔ Prado de San Sebastián ➔ Paseo de Colón(토레 델 오로) 순으로 정차합니다. 호텔 쪽은 Paseo de Colón에서 내려 도보 약 10~15분이 가장 가까워요." }
+        ],
+        tips: [
+          "캐리어가 크거나 일찍 호텔에 짐을 맡기고 싶다면 택시가 낫고, 비용을 아끼려면 EA 버스로 토레 델 오로까지 가서 걸어가세요.",
+          "EA 버스 시각표는 약 30분 간격이지만 시즌별로 달라요. TUSSAM 앱이나 웹사이트에서 확인하세요."
+        ],
+        maps: [
+          { label: "공항 ➔ 호텔 (대중교통)", url: () => MAPS.dir(PLACE.svq, PLACE.svqHotel, 'transit') },
+          { label: "공항 ➔ 호텔 (택시·차량)", url: () => MAPS.dir(PLACE.svq, PLACE.svqHotel, 'driving') },
+          { label: "토레 델 오로 ➔ 호텔 (도보)", url: () => MAPS.dir("Torre del Oro, Sevilla", PLACE.svqHotel, 'walking') },
+          { label: "호텔 위치", url: () => MAPS.pin(PLACE.svqHotel) }
+        ]
+      },
+      {
+        id: "leg-f", date: "11/20 (금)", short: "세비야 호텔 ➔ 공항",
+        title: "Soho Boutique Catedral ➔ 세비야 공항 (TP1103 10:00)",
+        summary: "07:00 호텔 출발 · 택시를 전날 호출 예약 · 공항 07:45~08:00 도착",
+        steps: [
+          "10:00 비행이라 07:00에 호텔을 나서 07:45~08:00 공항 도착을 목표로 합니다. 체크아웃 정산은 전날 밤에 미리 해두세요.",
+          "호텔 앞이 보행자·트램 거리라, 전날 밤 프런트에 07:00 택시 호출을 부탁하고 픽업 위치를 확인해 두는 게 안전합니다. 아침 일찍은 Puerta de Jerez 승강장(도보 약 7분)에 택시가 적을 수 있어요.",
+          "TAP과 대한항공이 별도 예약이라 세비야 체크인 때 짐을 리스본까지만 부치는 게 보통이고, 리스본에서 짐을 찾아 대한항공 카운터에서 다시 부쳐야 합니다. TAP 카운터에서 최종 목적지를 한 번 확인하세요."
+        ],
+        options: [
+          { name: "🚖 택시 (고정요금)", cost: "26€ (평일 낮) · 29€ (야간·휴일)", time: "20~30분", note: "07:00 전후라 야간요금 29€가 적용될 수 있어요. 공항까지도 고정요금이라 짐이 있을 때 가장 편합니다." },
+          { name: "🚌 EA 공항버스", cost: "편도 6€", time: "약 35분", note: "호텔에서 Paseo de Colón/Torre del Oro 정류장까지 도보 10~15분이 필요하고, 이른 시간 첫차·배차는 시각표에 따라 달라요. TUSSAM 앱에서 07:00 전후 버스가 있는지 먼저 확인하고, 없으면 택시를 쓰세요." }
+        ],
+        tips: [
+          "TAP 앱 화면에 온라인 체크인이 11/18부터 열린다고 나와 있어요. 열리면 바로 체크인해 두세요.",
+          "세비야에서 리스본으로 갈 때 시계는 -1시간(포르투갈이 한 시간 느려요)입니다."
+        ],
+        maps: [
+          { label: "호텔 ➔ 세비야 공항 (차량)", url: () => MAPS.dir(PLACE.svqHotel, PLACE.svq, 'driving') },
+          { label: "호텔 ➔ 세비야 공항 (대중교통)", url: () => MAPS.dir(PLACE.svqHotel, PLACE.svq, 'transit') }
+        ]
+      },
+      {
+        id: "leg-g", date: "11/20 (금)", short: "리스본 도착 ➔ KE922",
+        title: "리스본 공항 T1: TAP 도착 ➔ 시내 자유시간 ➔ KE922 (21:40)",
+        summary: "10:05 도착 · 대한항공 체크인 오픈(약 18:40)까지 약 8시간 30분",
+        steps: [
+          "세비야발 TAP은 쉥겐 구간이라 입국심사 없이 짐을 찾고 나옵니다. 인천행 KE922도 같은 T1에서 출발해요.",
+          "대한항공 체크인은 보통 출발 3시간 전(약 18:40)에 열리니 그전에는 짐을 부칠 수 없어요. 큰 짐은 T1 사물함(24시간)에 맡기세요. 위치와 요금, 캐리어가 들어가는 크기는 현장에서 확인하세요(소형은 3시간에 3.6€대로 나와 있고, 큰 사이즈는 더 비쌉니다).",
+          "메트로로 시내까지 25~30분(Aeroporto ➔ Alameda에서 그린 라인 ➔ Rossio)이라 11:30쯤 도착해 17:00까지 시내를 즐길 수 있습니다.",
+          "17:00에 시내를 출발해 18:00쯤 공항에 돌아와 짐을 찾고, 대한항공 카운터(T1 출국장, 최근 운항 정보에 60~66번으로 안내됨, 변동 가능)에서 체크인합니다. 국제선 마감은 출발 60분 전입니다.",
+          "출국 때 지문·얼굴 등록 줄이 생길 수 있어 여유를 두세요."
+        ],
+        options: [
+          { name: "🏙️ 시내 자유시간 (추천)", cost: "메트로 왕복 1인 약 3.8€ + 사물함", time: "체류 약 5시간", note: "아침 일찍 이동한 날이라 지칠 수 있어요. 점심과 가벼운 쇼핑 위주로 가볍게 다녀오세요. 복귀는 18:00 공항 도착이 목표입니다." },
+          { name: "🛍️ 공항에서 대기", cost: "—", time: "—", note: "체크인 오픈까지 대기 시간이 길어서 추천하지 않아요. 체크인 후 면세구역에서 포트와인·정어리 통조림을 사세요." }
+        ],
+        tips: [
+          "TAP 도착이 늦어져도 시내 시간이 줄 뿐이라 대한항공 체크인 마감에는 영향이 거의 없어요.",
+          "인천 도착은 11/21(토) 20:00 예정입니다(대한항공 앱에서 확인)."
+        ],
+        maps: [
+          { label: "리스본 공항 위치", url: () => MAPS.pin(PLACE.lisAirport) },
+          { label: "공항 ➔ 로시우 (대중교통)", url: () => MAPS.dir(PLACE.lisAirport, "Rossio, Lisboa", 'transit') }
+        ]
+      }
+    ];
+
+    function renderLegs() {
+      const root = document.getElementById('legList');
+      if (!root) return;
+      root.innerHTML = transitLegs.map(l => `
+        <div id="${l.id}-wrap" class="border border-slate-200 rounded-xl bg-white">
+          <div class="p-2.5 flex items-center justify-between cursor-pointer" onclick="toggleLeg('${l.id}')">
+            <div class="min-w-0 pr-2">
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-azulejo-100 text-azulejo-800">${l.date}</span>
+                <h4 class="text-xs font-bold text-slate-900 leading-snug">${l.title}</h4>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-0.5">${l.summary}</p>
+            </div>
+            <span id="${l.id}-arrow" class="text-slate-400 text-xs flex-shrink-0">▼</span>
+          </div>
+          <div id="${l.id}" class="hidden px-2.5 pb-2.5 space-y-2.5 text-[11px] text-slate-700">
+            <div class="space-y-1">
+              ${l.steps.map((t, i) => `<div class="flex items-start gap-1.5"><span class="font-bold text-azulejo-700 flex-shrink-0">${i + 1}.</span><span class="leading-relaxed">${t}</span></div>`).join('')}
+            </div>
+            <div class="space-y-1.5">
+              ${l.options.map(o => `
+                <div class="p-2 rounded-lg bg-slate-50 border border-slate-100">
+                  <div class="flex items-center justify-between gap-2">
+                    <strong class="text-slate-900">${o.name}</strong>
+                    <span class="text-right text-slate-500 flex-shrink-0"><b class="text-slate-800">${o.cost}</b> · ${o.time}</span>
+                  </div>
+                  <p class="text-slate-600 mt-0.5 leading-relaxed">${o.note}</p>
+                </div>`).join('')}
+            </div>
+            <div class="space-y-1">
+              ${l.tips.map(t => `<div class="bg-amber-50/70 border border-amber-200/80 rounded-lg p-2 text-amber-900 leading-relaxed">💡 ${t}</div>`).join('')}
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-0.5">
+              ${l.maps.map(m => `<a href="${m.url()}" target="_blank" rel="noopener" class="px-2.5 py-1 rounded-full bg-azulejo-600 text-white font-semibold active:scale-95 transition">🗺️ ${m.label}</a>`).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleLeg(id) {
+      const el = document.getElementById(id);
+      const arrow = document.getElementById(id + '-arrow');
+      if (!el) return;
+      const hidden = el.classList.toggle('hidden');
+      if (arrow) arrow.innerText = hidden ? '▼' : '▲';
+    }
+
+    function openLeg(id) {
+      switchTab('survival');
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        const arrow = document.getElementById(id + '-arrow');
+        if (el && el.classList.contains('hidden')) { el.classList.remove('hidden'); if (arrow) arrow.innerText = '▲'; }
+        const wrap = document.getElementById(id + '-wrap');
+        if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 150);
+    }
+
+    // ---------- Map tab (pins, routes, transport) ----------
+    const MODE = {
+      walk:   { label: '도보', icon: '🚶', color: '#6b7280', dash: '2 7', w: 3, gm: 'walking' },
+      metro:  { label: '메트로', icon: '🚇', color: '#2563eb', dash: null, w: 4, gm: 'transit' },
+      bus:    { label: '버스', icon: '🚌', color: '#0d9488', dash: null, w: 4, gm: 'transit' },
+      tram:   { label: '트램', icon: '🚋', color: '#d97706', dash: null, w: 4, gm: 'transit' },
+      car:    { label: '택시·우버·볼트', icon: '🚕', color: '#16a34a', dash: null, w: 4, gm: 'driving' },
+      van:    { label: '전용 투어 차량', icon: '🚐', color: '#db2777', dash: null, w: 4, gm: 'driving' },
+      train:  { label: '기차', icon: '🚆', color: '#ea580c', dash: null, w: 5, gm: 'transit' },
+      flight: { label: '항공', icon: '✈️', color: '#7c3aed', dash: '8 8', w: 3, gm: null }
+    };
+    const KIND = {
+      air: { i: '✈️', c: '#7c3aed' }, stn: { i: '🚉', c: '#ea580c' }, hotel: { i: '🏨', c: '#0f172a' },
+      sight: { i: '📍', c: '#2563eb' }, food: { i: '🍷', c: '#be123c' }, view: { i: '🌇', c: '#0891b2' }, show: { i: '🎶', c: '#9333ea' }
+    };
+    const CITY_LABEL = { lisbon: '리스본', porto: '포르투', seville: '세비야' };
+
+    // [lat, lng] are approximate pins. q is the Google Maps search text.
+    const P = {
+      lis_air:        { n: '리스본 공항 (T1)', ll: [38.7742, -9.1342], k: 'air', c: 'lisbon', q: 'Aeroporto Humberto Delgado, Lisboa' },
+      lis_hotel:      { n: '로시우 플라자 호텔', ll: [38.7124, -9.1391], k: 'hotel', c: 'lisbon', q: 'Rossio Plaza Hotel, Rua do Ouro 266, Lisboa' },
+      rossio_sq:      { n: '로시우 광장', ll: [38.7139, -9.1408], k: 'sight', c: 'lisbon', q: 'Praça Dom Pedro IV, Lisboa' },
+      praca_comercio: { n: '코메르시우 광장', ll: [38.7075, -9.1364], k: 'sight', c: 'lisbon', q: 'Praça do Comércio, Lisboa' },
+      se_lisboa:      { n: '리스본 대성당(Sé)', ll: [38.7099, -9.1330], k: 'sight', c: 'lisbon', q: 'Sé de Lisboa' },
+      portas_sol:     { n: '포르타스 두 솔 전망대', ll: [38.7117, -9.1298], k: 'view', c: 'lisbon', q: 'Miradouro das Portas do Sol, Lisboa' },
+      fado_chiado:    { n: '파두 공연(Fado in Chiado)', ll: [38.7109, -9.1425], k: 'show', c: 'lisbon', q: 'Fado in Chiado, Lisboa' },
+      jeronimos:      { n: '제로니무스 수도원', ll: [38.6979, -9.2068], k: 'sight', c: 'lisbon', q: 'Mosteiro dos Jerónimos, Lisboa' },
+      belem_tower:    { n: '벨렝 탑', ll: [38.6916, -9.2160], k: 'sight', c: 'lisbon', q: 'Torre de Belém, Lisboa' },
+      padrao:         { n: '발견기념비', ll: [38.6937, -9.2059], k: 'sight', c: 'lisbon', q: 'Padrão dos Descobrimentos, Lisboa' },
+      pasteis:        { n: '파스테이스 드 벨렝', ll: [38.6975, -9.2032], k: 'food', c: 'lisbon', q: 'Pastéis de Belém, Lisboa' },
+      senhora_monte:  { n: '세뇨라 두 몬트 전망대', ll: [38.7197, -9.1331], k: 'view', c: 'lisbon', q: 'Miradouro da Senhora do Monte, Lisboa' },
+      santa_apolonia: { n: '산타 아폴로니아역', ll: [38.7138, -9.1226], k: 'stn', c: 'lisbon', q: 'Estação de Santa Apolónia, Lisboa' },
+      campanha:       { n: '포르투 캄파냐역', ll: [41.1488, -8.5855], k: 'stn', c: 'porto', q: 'Estação de Porto Campanhã' },
+      sao_bento:      { n: '상벤투역', ll: [41.1456, -8.6104], k: 'stn', c: 'porto', q: 'Estação de São Bento, Porto' },
+      porto_apt:      { n: 'HM Infante Riverside Apt', ll: [41.1411, -8.6143], k: 'hotel', c: 'porto', q: 'HM Infante Riverside Apartment, Rua do Infante Dom Henrique 45, Porto' },
+      ribeira:        { n: '히베이라 강변', ll: [41.1405, -8.6138], k: 'sight', c: 'porto', q: 'Cais da Ribeira, Porto' },
+      almas:          { n: '알마스 예배당', ll: [41.1477, -8.6064], k: 'sight', c: 'porto', q: 'Capela das Almas, Porto' },
+      ponte_luis:     { n: '동 루이스 1세 다리', ll: [41.1397, -8.6095], k: 'view', c: 'porto', q: 'Ponte Dom Luís I, Porto' },
+      jardim_morro:   { n: '모루 정원', ll: [41.1378, -8.6089], k: 'view', c: 'porto', q: 'Jardim do Morro, Vila Nova de Gaia' },
+      majestic:       { n: '카페 마제스틱', ll: [41.1470, -8.6071], k: 'food', c: 'porto', q: 'Café Majestic, Porto' },
+      casa_fado:      { n: 'A Casa do Fado', ll: [41.1405, -8.6147], k: 'show', c: 'porto', q: 'A Casa do Fado, Porto' },
+      taylors:        { n: '테일러 와이너리', ll: [41.1380, -8.6132], k: 'food', c: 'porto', q: "Taylor's Port Lodge, Vila Nova de Gaia" },
+      wow:            { n: 'WOW 문화지구', ll: [41.1368, -8.6168], k: 'sight', c: 'porto', q: 'WOW World of Wine, Vila Nova de Gaia' },
+      braga_bom:      { n: '봉 제주스 두 몬트(브라가)', ll: [41.5547, -8.3772], k: 'sight', c: 'porto', q: 'Bom Jesus do Monte, Braga' },
+      guimaraes:      { n: '기마랑이스 성', ll: [41.4475, -8.2913], k: 'sight', c: 'porto', q: 'Castelo de Guimarães' },
+      se_porto:       { n: '포르투 대성당(Sé)', ll: [41.1430, -8.6112], k: 'sight', c: 'porto', q: 'Sé do Porto' },
+      palacio_bolsa:  { n: '팔라시오 다 볼사', ll: [41.1414, -8.6159], k: 'sight', c: 'porto', q: 'Palácio da Bolsa, Porto' },
+      clerigos:       { n: '클레리구스 탑·교회', ll: [41.1458, -8.6146], k: 'show', c: 'porto', q: 'Torre dos Clérigos, Porto' },
+      opo:            { n: '포르투 공항', ll: [41.2481, -8.6814], k: 'air', c: 'porto', q: 'Aeroporto Francisco Sá Carneiro, Porto' },
+      svq:            { n: '세비야 공항', ll: [37.4180, -5.8931], k: 'air', c: 'seville', q: 'Aeropuerto de Sevilla San Pablo' },
+      sev_hotel:      { n: '소호 부티크 카테드랄', ll: [37.3850, -5.9928], k: 'hotel', c: 'seville', q: 'Soho Boutique Catedral, Avenida de la Constitución 8, Sevilla' },
+      cathedral:      { n: '세비야 대성당·히랄다', ll: [37.3859, -5.9933], k: 'sight', c: 'seville', q: 'Catedral de Sevilla' },
+      alcazar:        { n: '레알 알카사르', ll: [37.3830, -5.9902], k: 'sight', c: 'seville', q: 'Real Alcázar de Sevilla' },
+      plaza_espana:   { n: '스페인 광장', ll: [37.3772, -5.9869], k: 'sight', c: 'seville', q: 'Plaza de España, Sevilla' },
+      maria_luisa:    { n: '마리아 루이사 공원', ll: [37.3740, -5.9875], k: 'sight', c: 'seville', q: 'Parque de María Luisa, Sevilla' }
+    };
+    const W = {
+      lisMetroAir: [38.7687, -9.1301], alameda: [38.7370, -9.1334], rossioMetro: [38.7141, -9.1409],
+      baixaChiado: [38.7106, -9.1398], terreiro: [38.7079, -9.1332], arco: [38.7106, -9.1366],
+      bridgeLuis: [41.1397, -8.6095], torreOro: [37.3826, -5.9965]
+    };
+    const METRO_AIR_HOTEL = [W.lisMetroAir, W.alameda, W.rossioMetro];
+
+    // leg = transport from the previous stop to this stop
+    const MAPDAYS = [
+      { day: 1, date: '11/8 (일)', city: 'lisbon', title: '리스본 도착',
+        pre: [
+          { i: '✈️', t: '인천 T2 12:00 ➔ 리스본 T1 18:45 (KE921, 비행 약 15시간 45분, 도착은 예정)' },
+          { i: '🛂', t: '첫 입국이라 EES(지문·얼굴 등록)로 30~90분 걸릴 수 있어요. 호텔 체크인은 23:30까지입니다.' }
+        ],
+        seq: [
+          { id: 'lis_air', t: '19:30~', d: '입국심사 후 짐 수령. 우버·볼트는 입국장 북쪽 단기주차장 P2 1층에서 탑승합니다.' },
+          { id: 'lis_hotel', t: '저녁', d: '로시우 플라자 호텔 체크인 (Rua do Ouro 266, 산타 주스타 엘리베이터 옆).',
+            leg: { mode: 'car', t: '20~30분', c: '약 7~15€', note: '호텔 앞이 보행자 위주 거리라 근처에서 내려 걸을 수 있어요.',
+              alts: [{ mode: 'metro', t: '25~30분', c: '1.92€ (카드 태그)', note: 'Aeroporto(레드) ➔ Alameda에서 그린 라인(Cais do Sodré 방면) ➔ Rossio ➔ 도보 3~5분', via: METRO_AIR_HOTEL }] } },
+          { id: 'rossio_sq', t: '늦은 저녁', d: '로시우 광장 야간 산책과 가벼운 식사.', leg: { mode: 'walk' } }
+        ] },
+      { day: 2, date: '11/9 (월)', city: 'lisbon', title: '바이샤·알파마·파두',
+        seq: [
+          { id: 'lis_hotel', t: '오전', d: '호텔 출발.' },
+          { id: 'praca_comercio', t: '오전', d: '아우구스타 개선문을 지나 코메르시우 광장(돈 호세 1세 기마상).', leg: { mode: 'walk', via: [W.arco] } },
+          { id: 'se_lisboa', t: '오후', d: '알파마 탐방 시작: 리스본 대성당(Sé).', leg: { mode: 'walk' } },
+          { id: 'portas_sol', t: '오후', d: '포르타스 두 솔 전망대에서 붉은 지붕 조망.', leg: { mode: 'walk' } },
+          { id: 'fado_chiado', t: '저녁', d: 'Fado in Chiado 또는 알파마 선술집에서 파두 공연(예약 필요).',
+            leg: { mode: 'tram', t: '15~25분', c: '3.30€ (카드 태그)', note: '트램 28E를 타거나 걸어서 이동. 28번은 카드 태그 요금이 3.30€로 비싸고 저녁엔 줄이 길어서 우버·볼트가 나을 수 있어요.',
+              alts: [{ mode: 'car', t: '약 10분', c: '대략 4~8€', note: '야간엔 가장 편해요.' }] } },
+          { id: 'lis_hotel', t: '밤', d: '호텔 복귀.', leg: { mode: 'walk' } }
+        ] },
+      { day: 3, date: '11/10 (화)', city: 'lisbon', title: '벨렝 & 일몰 전망대',
+        seq: [
+          { id: 'lis_hotel', t: '오전', d: '호텔 출발 (Praça da Figueira 정류장까지 도보 5분).' },
+          { id: 'jeronimos', t: '오전', d: '제로니무스 수도원 (화요일은 개관, 월요일은 휴관).',
+            leg: { mode: 'bus', t: '30~40분', c: '2.30€ (카드 태그, 1인당)', note: '728번 버스(714번도 가능) ➔ Mosteiro dos Jerónimos 정류장. 탈 때 앞쪽 단말기에 카드나 폰을 한 번 태그해요.',
+              alts: [{ mode: 'tram', t: '약 50분', c: '3.30€', note: '15E 트램은 일부 차량(긴 트램)에서 은행카드가 안 돼요. 줄도 길 수 있어서 728번 버스를 추천해요.' }] } },
+          { id: 'belem_tower', t: '오전', d: '벨렝 탑 외관과 강변 산책.', leg: { mode: 'walk' } },
+          { id: 'padrao', t: '낮', d: '발견기념비.', leg: { mode: 'walk' } },
+          { id: 'pasteis', t: '낮', d: '원조 파스테이스 드 벨렝(줄이 길어도 회전이 빨라요).', leg: { mode: 'walk' } },
+          { id: 'senhora_monte', t: '일몰', d: '세뇨라 두 몬트 전망대에서 일몰·야경(근처 미라도루 다 그라사에서 와인 한 잔).',
+            leg: { mode: 'car', t: '약 25분', c: '대략 8~12€', note: '벨렝에서 우버·볼트가 가장 편해요.',
+              alts: [{ mode: 'bus', t: '약 60분', note: '728번으로 시내까지 간 뒤 트램 28E나 도보로 이동.' }] } },
+          { id: 'lis_hotel', t: '밤', d: '호텔 복귀.', leg: { mode: 'car', t: '약 10분', c: '대략 4~7€', note: '내리막 도보도 되지만 밤엔 우버·볼트를 권장해요.' } }
+        ] },
+      { day: 4, date: '11/11 (수)', city: 'porto', title: '리스본 ➔ 포르투 AP 열차',
+        pre: [{ i: '🧳', t: '12:00 체크아웃 후 로시우·루아 아우구스타 쇼핑 (짐은 프런트에 맡길 수 있어요).' }],
+        seq: [
+          { id: 'lis_hotel', t: '13:00', d: '호텔에서 출발.' },
+          { id: 'santa_apolonia', t: '13:30', d: '역 도착 후 전광판에서 AP 133 승강장 확인 (CP 앱 예약 기준 승차역).',
+            leg: { mode: 'car', t: '10~15분', c: '약 4~8€', note: '짐이 있을 때 가장 편해요.',
+              alts: [{ mode: 'metro', t: '약 20분', c: '1.92€', note: 'Baixa-Chiado ➔ 블루 라인 ➔ 종점 Santa Apolónia', via: [W.baixaChiado, W.terreiro] }] } },
+          { id: 'campanha', t: '14:00 ➔ 16:48', d: 'AP 133, 2시간 48분. 1등석 C1 L11·L12, 프로모 티켓 총 60€(2인).',
+            leg: { mode: 'train', t: '2시간 48분', c: '예약 60€ (2인)', note: '프로모 티켓은 지정 열차 전용이라 놓치지 않게 일찍 도착하세요.' } },
+          { id: 'sao_bento', t: '17:00', d: '근교열차(Urbano)로 갈아타기. AP 티켓으로 도착 후 1시간 안에는 추가 요금이 없어요.',
+            leg: { mode: 'train', t: '4~5분', c: '무료 (AP 티켓)', note: '캄파냐역 안에서 Urbanos/São Bento 표지판을 따라 다른 승강장으로 이동.' } },
+          { id: 'porto_apt', t: '17:20', d: 'HM Infante Riverside Apt 체크인 (16:00~).', leg: { mode: 'walk', t: '약 9분', note: '내리막 돌길이에요. 캐리어 바퀴 소리가 커요.' } },
+          { id: 'ribeira', t: '저녁', d: '히베이라 산책과 동 루이스 1세 다리 야경, 저녁 식사.', leg: { mode: 'walk' } }
+        ] },
+      { day: 5, date: '11/12 (목)', city: 'porto', title: '포르투 스냅 & 파두',
+        seq: [
+          { id: 'porto_apt', t: '아침', d: '숙소 출발.' },
+          { id: 'sao_bento', t: '오전', d: '상벤투역 대합실의 2만 장 아줄레주 (무료).', leg: { mode: 'walk' } },
+          { id: 'almas', t: '오전', d: '알마스 예배당 외벽 아줄레주.', leg: { mode: 'walk' } },
+          { id: 'ribeira', t: '낮', d: '히베이라 강변.', leg: { mode: 'walk' } },
+          { id: 'ponte_luis', t: '낮', d: '동 루이스 1세 다리 상층부 (도보 통행 가능).', leg: { mode: 'walk' } },
+          { id: 'jardim_morro', t: '오후', d: '모루 정원 전망.', leg: { mode: 'walk' } },
+          { id: 'majestic', t: '오후', d: '카페 마제스틱 또는 꽃의 거리 카페에서 휴식.', leg: { mode: 'walk', via: [W.bridgeLuis] } },
+          { id: 'casa_fado', t: '저녁', d: 'A Casa do Fado에서 어쿠스틱 파두 라이브 (예약 권장).', leg: { mode: 'walk' } },
+          { id: 'porto_apt', t: '밤', d: '숙소 복귀.', leg: { mode: 'walk' } }
+        ] },
+      { day: 6, date: '11/13 (금)', city: 'porto', title: '가이아 와이너리',
+        seq: [
+          { id: 'porto_apt', t: '오후', d: '숙소 출발.' },
+          { id: 'taylors', t: '오후', d: "테일러 와이너리: 한국어 오디오 가이드 투어, 포트와인 3종 시음.",
+            leg: { mode: 'walk', via: [W.bridgeLuis], note: '동 루이스 1세 다리를 건너 가이아 언덕을 올라요.',
+              alts: [{ mode: 'car', t: '약 10분', c: '대략 5~8€', note: '오르막이 힘들 때 편해요.' }] } },
+          { id: 'porto_apt', t: '저녁', d: '숙소 복귀.', leg: { mode: 'car', t: '약 10분', c: '대략 5~8€', note: '시음 뒤에는 우버·볼트를 추천해요.' } }
+        ] },
+      { day: 7, date: '11/14 (토)', city: 'porto', title: '브라가 & 기마랑이스',
+        pre: [{ i: '🚐', t: '전용 투어입니다. 예약 바우처의 픽업 시각·장소를 확인하세요.' }],
+        seq: [
+          { id: 'porto_apt', t: '아침', d: '숙소 출발.' },
+          { id: 'braga_bom', t: '오전', d: '봉 제주스 성당의 바로크 지그재그 계단과 감각의 분수.', leg: { mode: 'van', t: '약 1시간', note: '포르투 ➔ 브라가 약 55km (추정).' } },
+          { id: 'guimaraes', t: '오후', d: '기마랑이스 성과 중세 구시가지.', leg: { mode: 'van', t: '약 30분', note: '브라가 ➔ 기마랑이스 약 25km (추정).' } },
+          { id: 'sao_bento', t: '저녁', d: '포르투 복귀 후 상벤투 인근 타파스 바에서 저녁.', leg: { mode: 'van', t: '약 1시간', note: '기마랑이스 ➔ 포르투 약 55km (추정).' } }
+        ] },
+      { day: 8, date: '11/15 (일)', city: 'porto', title: '클래식 건축 & 스피리투스',
+        seq: [
+          { id: 'porto_apt', t: '오전', d: '숙소 출발.' },
+          { id: 'se_porto', t: '낮', d: '포르투 대성당(Sé) 관람.', leg: { mode: 'walk' } },
+          { id: 'palacio_bolsa', t: '낮', d: '팔라시오 다 볼사의 아라비아의 방 (가이드 투어, 사전 예약 권장).', leg: { mode: 'walk' } },
+          { id: 'clerigos', t: '일몰·야간', d: '클레리구스 종탑 일몰 + 교회 내부 스피리투스 조명 쇼.', leg: { mode: 'walk' } },
+          { id: 'porto_apt', t: '밤', d: '숙소 복귀.', leg: { mode: 'walk' } }
+        ] },
+      { day: 9, date: '11/16 (월)', city: 'porto', title: 'WOW 또는 6개 다리 크루즈',
+        pre: [{ i: '⏰', t: '내일 05:00 볼트 픽업이라 저녁에 짐 정리와 알람 설정을 끝내세요.' }],
+        seq: [
+          { id: 'porto_apt', t: '아침', d: '숙소 출발.' },
+          { id: 'wow', t: '낮', d: 'WOW 포르투 복합 문화지구.', leg: { mode: 'walk', via: [W.bridgeLuis], note: '동 루이스 1세 다리를 건너요.' } },
+          { id: 'ribeira', t: '오후', d: '(선택) 6개 다리 크루즈 선착장 — 히베이라 쪽.', leg: { mode: 'walk', via: [W.bridgeLuis] } },
+          { id: 'jardim_morro', t: '해질녘', d: '모루 정원에서 마지막 포르투 노을.', leg: { mode: 'walk', via: [W.bridgeLuis] } },
+          { id: 'porto_apt', t: '밤', d: '숙소 복귀, 짐 정리.', leg: { mode: 'walk', via: [W.bridgeLuis] } }
+        ] },
+      { day: 10, date: '11/17 (화)', city: 'seville', title: '포르투 ➔ 세비야',
+        pre: [{ i: '📱', t: '04:45에 볼트 앱에서 기사 배정을 확인하세요. 취소되면 우버·택시로 바로 바꾸세요.' }],
+        seq: [
+          { id: 'porto_apt', t: '05:00', d: '볼트 픽업 (Bolsa dos Comerciantes 앞, 숙소 바로 옆).' },
+          { id: 'opo', t: '05:30', d: '포르투 공항 도착. 07:35 FR5467 탑승.', leg: { mode: 'car', t: '20~30분', c: '볼트 예약 화면 확인', note: '예약 기사가 취소하면 우버·택시로 대체.' } },
+          { id: 'svq', t: '09:50', d: '세비야 공항 도착 (스페인은 1시간 빠름).', leg: { mode: 'flight', t: '1시간 15분', c: '라이언에어 FR5467', note: '07:35 출발 ➔ 09:50 도착(현지 시각).' } },
+          { id: 'sev_hotel', t: '10:30경', d: '호텔에 짐 맡기기 (체크인 14:00).',
+            leg: { mode: 'car', t: '20~30분', c: '26€ 고정 (평일 낮)', note: '호텔 앞이 보행자·트램 거리라 근처에서 내릴 수 있어요.',
+              alts: [{ mode: 'bus', t: '35분 + 도보 10~15분', c: '6€', note: 'EA 공항버스 ➔ Paseo de Colón/Torre del Oro 하차 ➔ 도보', via: [W.torreOro] }] } },
+          { id: 'cathedral', t: '저녁', d: '대성당·히랄다 야경과 타파스 바 투어.', leg: { mode: 'walk' } }
+        ] },
+      { day: 11, date: '11/18 (수)', city: 'seville', title: '대성당·알카사르·플라멩코',
+        post: [{ i: '🎶', t: '저녁: 정통 플라멩코 공연 — 공연장이 확정되면 핀을 추가할 수 있어요.' }],
+        seq: [
+          { id: 'sev_hotel', t: '오전', d: '호텔 출발.' },
+          { id: 'cathedral', t: '오전', d: '대성당 내부(콜럼버스의 묘)와 히랄다 탑 정상 등반.', leg: { mode: 'walk' } },
+          { id: 'alcazar', t: '오후', d: '무데하르 양식의 정수, 레알 알카사르.', leg: { mode: 'walk' } },
+          { id: 'sev_hotel', t: '저녁', d: '호텔로 돌아와 플라멩코 공연 준비.', leg: { mode: 'walk' } }
+        ] },
+      { day: 12, date: '11/19 (목)', city: 'seville', title: '스페인 광장 & 마지막 밤',
+        post: [{ i: '🧳', t: '내일 07:00 택시 출발이라 짐 정리와 프런트 택시 호출 예약을 확인하세요.' }],
+        seq: [
+          { id: 'sev_hotel', t: '오전', d: '호텔 출발.' },
+          { id: 'plaza_espana', t: '오전', d: '스페인 광장: 타일 벤치와 수로 보트.',
+            leg: { mode: 'walk', note: '구시가지에서 걸어갈 만한 거리예요.', alts: [{ mode: 'car', t: '8~10분', c: '대략 6~9€', note: '더우면 택시가 편해요.' }] } },
+          { id: 'maria_luisa', t: '오후', d: '마리아 루이사 공원 산책.', leg: { mode: 'walk' } },
+          { id: 'sev_hotel', t: '저녁', d: '기념품 쇼핑을 마무리하고 하몬·상그리아 마지막 만찬.', leg: { mode: 'walk' } }
+        ] },
+      { day: 13, date: '11/20 (금)', city: 'seville', title: '세비야 ➔ 리스본 ➔ 귀국',
+        post: [{ i: '✈️', t: '21:40 KE922 리스본 ➔ 11/21(토) 20:00 인천 (도착은 예정)' }],
+        seq: [
+          { id: 'sev_hotel', t: '07:00', d: '호텔 출발 (전날 호출 예약한 택시).' },
+          { id: 'svq', t: '07:45~08:00', d: '세비야 공항 도착, 10:00 TAP TP1103 탑승.',
+            leg: { mode: 'car', t: '20~30분', c: '26€ (07:00 전후엔 29€일 수 있음)', note: '공항까지도 고정요금이에요.',
+              alts: [{ mode: 'bus', t: '35분 + 도보', c: '6€', note: 'EA 버스 첫차 시각은 TUSSAM에서 확인', via: [W.torreOro] }] } },
+          { id: 'lis_air', t: '10:05', d: '리스본 도착. 짐은 T1 사물함에 맡기세요.', leg: { mode: 'flight', t: '1시간 05분', c: 'TAP TP1103', note: '10:00 출발 ➔ 10:05 도착(현지 시각, 포르투갈이 1시간 느림).' } },
+          { id: 'rossio_sq', t: '11:30~17:00', d: '시내 자유시간: 점심, 쇼핑, 마지막 에그타르트.',
+            leg: { mode: 'metro', t: '25~30분', c: '1.92€ (카드 태그)', note: 'Aeroporto ➔ Alameda ➔ Rossio', via: METRO_AIR_HOTEL } },
+          { id: 'lis_air', t: '18:00', d: '공항 복귀, 사물함에서 짐 찾기, 18:40경 KE922 체크인.',
+            leg: { mode: 'metro', t: '25~30분', c: '1.92€', note: '17:00에는 시내에서 출발하세요.', via: [...METRO_AIR_HOTEL].reverse() } }
+        ] }
+    ];
+
+    // ---------- helpers ----------
+    function kmBetween(a, b) {
+      const R = 6371, rad = x => x * Math.PI / 180;
+      const dLat = rad(b[0] - a[0]), dLng = rad(b[1] - a[1]);
+      const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(dLng / 2) ** 2;
+      return 2 * R * Math.asin(Math.sqrt(h));
+    }
+    function pathKm(pts) { let d = 0; for (let i = 1; i < pts.length; i++) d += kmBetween(pts[i - 1], pts[i]); return d; }
+    function legPath(from, to, via, mode) {
+      const a = P[from].ll, b = P[to].ll;
+      if (mode === 'flight') return arcPoints(a, b);
+      return [a, ...(via || []), b];
+    }
+    function arcPoints(a, b) {
+      const mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+      const dx = b[1] - a[1], dy = b[0] - a[0];
+      const c = [mid[0] - dx * 0.18, mid[1] + dy * 0.18];
+      const pts = [];
+      for (let i = 0; i <= 28; i++) {
+        const t = i / 28, u = 1 - t;
+        pts.push([u * u * a[0] + 2 * u * t * c[0] + t * t * b[0], u * u * a[1] + 2 * u * t * c[1] + t * t * b[1]]);
+      }
+      return pts;
+    }
+    function walkMinutes(from, to, via) {
+      const km = pathKm([P[from].ll, ...(via || []), P[to].ll]);
+      return Math.max(1, Math.round(km * 1.3 / 4.5 * 60));
+    }
+    function gmDirUrl(from, to, mode) {
+      const gm = MODE[mode] && MODE[mode].gm;
+      if (!gm) return null;
+      return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(P[from].q)}&destination=${encodeURIComponent(P[to].q)}&travelmode=${gm}`;
+    }
+    function gmPinUrl(id) { return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(P[id].q)}`; }
+    function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+    // ---------- state ----------
+    let MAP = null, MAP_LAYER = null, MAP_MARKERS = {}, MAP_LEGLINES = [], mapView = 'all', mapReady = false;
+
+    function mapChips() {
+      const chips = [{ v: 'all', l: '전체' }, { v: 'city:lisbon', l: '리스본' }, { v: 'city:porto', l: '포르투' }, { v: 'city:seville', l: '세비야' }]
+        .concat(MAPDAYS.map(d => ({ v: 'day:' + d.day, l: `D${d.day} ${d.date.split(' ')[0]}` })));
+      document.getElementById('mapChips').innerHTML = chips.map(c => {
+        const on = c.v === mapView;
+        return `<button onclick="selectMapView('${c.v}')" class="flex-shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full border ${on ? 'bg-azulejo-600 text-white border-azulejo-600' : 'bg-white text-slate-600 border-slate-200'}">${c.l}</button>`;
+      }).join('');
+      const active = document.querySelector('#mapChips button.bg-azulejo-600');
+      if (active && active.scrollIntoView) { try { active.scrollIntoView({ inline: 'center', block: 'nearest' }); } catch (e) {} }
+    }
+
+    function initMap() {
+      if (MAP || typeof L === 'undefined') return;
+      MAP = L.map('mapBox', { zoomControl: true, scrollWheelZoom: false });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19, subdomains: 'abcd',
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+      }).addTo(MAP);
+      MAP_LAYER = L.layerGroup().addTo(MAP);
+    }
+
+    function markerHtml(label, kind) {
+      const k = KIND[kind] || KIND.sight;
+      return `<div style="background:${k.c};color:#fff;border:2px solid #fff;border-radius:999px;min-width:26px;height:26px;padding:0 5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;box-shadow:0 1px 4px rgba(0,0,0,.4)">${label}</div>`;
+    }
+
+    function addMarker(id, label, extra) {
+      if (!MAP) return;
+      const p = P[id];
+      const m = L.marker(p.ll, { icon: L.divIcon({ html: markerHtml(label, p.k), className: '', iconSize: [26, 26], iconAnchor: [13, 13] }) });
+      m.bindPopup(`<div style="font-size:12px;line-height:1.4"><b>${KIND[p.k].i} ${esc(p.n)}</b>${extra ? '<br>' + esc(extra) : ''}<br><a href="${gmPinUrl(id)}" target="_blank" rel="noopener">구글맵에서 열기</a></div>`);
+      m.addTo(MAP_LAYER);
+      MAP_MARKERS[id] = m;
+    }
+
+    function addLine(path, mode, tip, faint) {
+      if (!MAP) return null;
+      const m = MODE[mode];
+      const line = L.polyline(path, { color: m.color, weight: faint ? 3 : m.w, opacity: faint ? 0.45 : 0.9, dashArray: faint ? '4 8' : m.dash });
+      line.bindTooltip(tip, { sticky: true });
+      line.addTo(MAP_LAYER);
+      return line;
+    }
+
+    function fit(points) {
+      if (!MAP || !points.length) return;
+      MAP.fitBounds(L.latLngBounds(points), { padding: [28, 28], maxZoom: 15 });
+    }
+
+    function selectMapView(v) {
+      mapView = v;
+      mapChips();
+      if (MAP_LAYER) MAP_LAYER.clearLayers();
+      MAP_MARKERS = {}; MAP_LEGLINES = [];
+      const modesUsed = new Set();
+      if (v === 'all') drawOverview(modesUsed);
+      else if (v.startsWith('city:')) drawCity(v.slice(5));
+      else drawDay(parseInt(v.slice(4), 10), modesUsed);
+      renderLegend(modesUsed);
+      if (MAP) setTimeout(() => MAP.invalidateSize(), 60);
+    }
+
+    function drawOverview(modesUsed) {
+      const hubs = ['lis_air', 'lis_hotel', 'santa_apolonia', 'campanha', 'porto_apt', 'opo', 'svq', 'sev_hotel'];
+      const pts = [];
+      hubs.forEach(id => { addMarker(id, KIND[P[id].k].i); pts.push(P[id].ll); });
+      [['santa_apolonia', 'campanha', 'train', '11/11 AP 133 14:00 ➔ 16:48'], ['opo', 'svq', 'flight', '11/17 FR5467 07:35 ➔ 09:50'], ['svq', 'lis_air', 'flight', '11/20 TP1103 10:00 ➔ 10:05']]
+        .forEach(([a, b, mode, tip]) => { addLine(legPath(a, b, null, mode), mode, `${MODE[mode].icon} ${tip}`); modesUsed.add(mode); });
+      fit(pts);
+      const hotels = [['lis_hotel', '11/8 ~ 11/11', '3박'], ['porto_apt', '11/11 ~ 11/17', '6박'], ['sev_hotel', '11/17 ~ 11/20', '3박']];
+      const moves = [
+        { d: 1, i: '✈️', t: '11/8(일) 인천 T2 12:00 ➔ 리스본 18:45', n: 'KE921, 도착은 예정' },
+        { d: 4, i: '🚆', t: '11/11(수) 리스본 ➔ 포르투 14:00 ➔ 16:48', n: 'AP 133, 산타 아폴로니아 ➔ 캄파냐' },
+        { d: 10, i: '✈️', t: '11/17(화) 포르투 ➔ 세비야 07:35 ➔ 09:50', n: 'FR5467, 05:00 볼트 예약' },
+        { d: 13, i: '✈️', t: '11/20(금) 세비야 ➔ 리스본 10:00 ➔ 10:05, 21:40 인천행', n: 'TP1103 + KE922, 인천 11/21(토) 20:00 도착은 예정' }
+      ];
+      document.getElementById('mapPanel').innerHTML = `
+        <div class="bg-white rounded-2xl border border-slate-200 p-3 space-y-2">
+          <h4 class="text-xs font-bold text-slate-900">도시 간 이동</h4>
+          ${moves.map(m => `<button onclick="selectMapView('day:${m.d}')" class="w-full text-left p-2 rounded-lg bg-slate-50 border border-slate-100 active:scale-[.99]"><div class="text-[11px] font-bold text-slate-800">${m.i} ${m.t}</div><div class="text-[10px] text-slate-500">${m.n} · 탭하면 이날 지도</div></button>`).join('')}
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-3 space-y-2">
+          <h4 class="text-xs font-bold text-slate-900">숙소 3곳 (12박)</h4>
+          ${hotels.map(h => `<div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100"><div><div class="text-[11px] font-bold text-slate-800">🏨 ${P[h[0]].n}</div><div class="text-[10px] text-slate-500">${h[1]} · ${h[2]}</div></div><a href="${gmPinUrl(h[0])}" target="_blank" rel="noopener" class="text-[10px] font-semibold px-2 py-1 rounded-full bg-azulejo-600 text-white flex-shrink-0">구글맵</a></div>`).join('')}
+        </div>`;
+    }
+
+    function drawCity(city) {
+      const ids = Object.keys(P).filter(id => P[id].c === city);
+      const pts = [];
+      ids.forEach(id => { addMarker(id, KIND[P[id].k].i); pts.push(P[id].ll); });
+      fit(pts);
+      const dayOf = {};
+      MAPDAYS.forEach(d => d.seq.forEach(s => { (dayOf[s.id] = dayOf[s.id] || new Set()).add(d.day); }));
+      document.getElementById('mapPanel').innerHTML = `
+        <div class="bg-white rounded-2xl border border-slate-200 p-3 space-y-2">
+          <h4 class="text-xs font-bold text-slate-900">${CITY_LABEL[city]} 장소 ${ids.length}곳</h4>
+          ${ids.map(id => `
+            <div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-slate-50 border border-slate-100">
+              <button onclick="focusPlace('${id}')" class="text-left min-w-0">
+                <div class="text-[11px] font-bold text-slate-800">${KIND[P[id].k].i} ${esc(P[id].n)}</div>
+                <div class="text-[10px] text-slate-500">${dayOf[id] ? [...dayOf[id]].map(n => 'D' + n).join(' · ') : '일정 없음'}</div>
+              </button>
+              <a href="${gmPinUrl(id)}" target="_blank" rel="noopener" class="text-[10px] font-semibold px-2 py-1 rounded-full bg-azulejo-600 text-white flex-shrink-0">구글맵</a>
+            </div>`).join('')}
+        </div>`;
+    }
+
+    function drawDay(n, modesUsed) {
+      const d = MAPDAYS.find(x => x.day === n);
+      if (!d) return;
+      const pts = [];
+      const labels = {};
+      d.seq.forEach((s, i) => { (labels[s.id] = labels[s.id] || []).push(i + 1); });
+      Object.keys(labels).forEach(id => { addMarker(id, labels[id].join('·'), d.seq.find(s => s.id === id).d); pts.push(P[id].ll); });
+      const legRows = [];
+      d.seq.forEach((s, i) => {
+        if (!s.leg || i === 0) { legRows.push(null); return; }
+        const from = d.seq[i - 1].id, to = s.id, leg = s.leg;
+        const path = legPath(from, to, leg.via, leg.mode);
+        const mins = leg.mode === 'walk' ? (leg.t || `약 ${walkMinutes(from, to, leg.via)}분`) : leg.t;
+        const line = addLine(path, leg.mode, `${MODE[leg.mode].icon} ${MODE[leg.mode].label}${mins ? ' ' + mins : ''}`);
+        modesUsed.add(leg.mode);
+        path.forEach(pt => pts.push(pt));
+        MAP_LEGLINES[i] = { line, path };
+        (leg.alts || []).forEach(a => {
+          addLine(legPath(from, to, a.via, a.mode), a.mode, `대안: ${MODE[a.mode].icon} ${MODE[a.mode].label}${a.t ? ' ' + a.t : ''}`, true);
+          modesUsed.add(a.mode);
+        });
+        legRows.push({ from, to, leg, mins });
+      });
+      fit(pts);
+
+      const transport = (row, i) => {
+        const l = row.leg, m = MODE[l.mode];
+        const link = gmDirUrl(row.from, row.to, l.mode);
+        const alts = (l.alts || []).map(a => {
+          const am = MODE[a.mode];
+          const al = gmDirUrl(row.from, row.to, a.mode);
+          return `<div class="mt-1 pl-2 border-l-2 border-slate-200 text-[10px] text-slate-600"><b>또는 ${am.icon} ${am.label}</b>${a.t ? ' · ' + a.t : ''}${a.c ? ' · ' + a.c : ''}${a.note ? '<br>' + a.note : ''}${al ? ` <a class="text-azulejo-700 font-semibold" href="${al}" target="_blank" rel="noopener">길찾기</a>` : ''}</div>`;
+        }).join('');
+        return `<div onclick="focusLeg(${i})" class="ml-3 pl-3 py-1.5 border-l-4 text-[11px]" style="border-color:${m.color}">
+            <div class="font-bold text-slate-800">${m.icon} ${m.label}${row.mins ? ' · ' + row.mins : ''}${l.c ? ' · ' + l.c : ''}${l.mode === 'walk' && !l.t ? ' <span class="font-normal text-slate-400">(직선거리 기준 추정)</span>' : ''}</div>
+            ${l.note ? `<div class="text-slate-600 leading-snug">${l.note}</div>` : ''}
+            ${alts}
+            ${link ? `<a href="${link}" target="_blank" rel="noopener" class="inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-azulejo-600 text-white">🗺️ 구글맵 길찾기</a>` : ''}
+          </div>`;
+      };
+      const stop = (s, i) => {
+        const p = P[s.id], k = KIND[p.k];
+        return `<div class="flex items-start gap-2 p-2.5 rounded-xl bg-white border border-slate-200">
+            <div class="w-6 h-6 rounded-full text-white text-[11px] font-extrabold flex items-center justify-center flex-shrink-0" style="background:${k.c}">${i + 1}</div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between gap-2">
+                <button onclick="focusPlace('${s.id}')" class="text-left text-xs font-bold text-slate-900">${k.i} ${esc(p.n)}</button>
+                <span class="text-[10px] font-bold text-azulejo-700 flex-shrink-0">${s.t}</span>
+              </div>
+              <p class="text-[11px] text-slate-600 leading-snug mt-0.5">${s.d}</p>
+              <a href="${gmPinUrl(s.id)}" target="_blank" rel="noopener" class="inline-block mt-1 text-[10px] font-semibold text-azulejo-700">구글맵에서 열기</a>
+            </div>
+          </div>`;
+      };
+      const note = (r, tone) => `<div class="p-2 rounded-lg ${tone} text-[11px] leading-snug">${r.i} ${r.t}</div>`;
+      document.getElementById('mapPanel').innerHTML = `
+        <div class="bg-white rounded-2xl border border-slate-200 p-3">
+          <div class="text-[10px] font-bold text-azulejo-700">${CITY_LABEL[d.city]} · D${d.day} · ${d.date}</div>
+          <h4 class="text-sm font-extrabold text-slate-900">${d.title}</h4>
+        </div>
+        ${(d.pre || []).map(r => note(r, 'bg-amber-50 border border-amber-200 text-amber-900')).join('')}
+        <div class="space-y-0">
+          ${d.seq.map((s, i) => (legRows[i] ? transport(legRows[i], i) : '') + stop(s, i)).join('')}
+        </div>
+        ${(d.post || []).map(r => note(r, 'bg-slate-50 border border-slate-200 text-slate-700')).join('')}`;
+    }
+
+    function renderLegend(modesUsed) {
+      const keys = [...modesUsed];
+      document.getElementById('mapLegend').innerHTML = keys.length
+        ? keys.map(k => `<span class="inline-flex items-center gap-1"><span style="display:inline-block;width:16px;height:0;border-top:${MODE[k].dash ? '3px dashed' : '4px solid'} ${MODE[k].color}"></span>${MODE[k].icon} ${MODE[k].label}</span>`).join('') + '<span class="text-slate-400">연한 점선은 대안 경로</span>'
+        : '<span class="text-slate-400">핀을 누르면 설명과 구글맵 링크가 열려요.</span>';
+    }
+
+    function focusPlace(id) {
+      if (MAP && MAP_MARKERS[id]) { MAP.flyTo(P[id].ll, Math.max(MAP.getZoom(), 15), { duration: 0.6 }); MAP_MARKERS[id].openPopup(); }
+      const box = document.getElementById('mapBox');
+      if (box && box.scrollIntoView) box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    function focusLeg(i) {
+      const l = MAP_LEGLINES[i];
+      if (MAP && l) { MAP.fitBounds(L.latLngBounds(l.path), { padding: [40, 40], maxZoom: 16 }); }
+    }
+
+    function onMapShown() {
+      setTimeout(() => {
+        initMap();
+        if (!MAP) {
+          document.getElementById('mapBox').innerHTML = '<div class="h-full flex items-center justify-center text-center text-[11px] text-slate-500 p-4">지도 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인해 주세요. 아래 목록과 구글맵 링크는 그대로 쓸 수 있어요.</div>';
+        }
+        selectMapView(mapView);
+        mapReady = true;
+      }, 60);
+    }
+    function openDayMap(n) {
+      mapView = 'day:' + n;
+      switchTab('map');
+    }
+
+    // ---------- Trip tools: today card, address cards, bookings, checklist, expenses ----------
+    const TRIP = { startISO: '2026-11-08', endISO: '2026-11-20' };
+    const memStore = {};
+    const store = {
+      get(k, def) { try { const v = localStorage.getItem(k); if (v !== null) return JSON.parse(v); } catch (e) {} return (k in memStore) ? memStore[k] : def; },
+      set(k, v) { memStore[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+    };
+    function pad2(n) { return String(n).padStart(2, '0'); }
+    function isoToday() { const d = new Date(); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; }
+    function dayISO(n) { return `2026-11-${pad2(7 + n)}`; }
+    function dayDiff(aISO, bISO) { const [a1, a2, a3] = aISO.split('-').map(Number), [b1, b2, b3] = bISO.split('-').map(Number); return Math.round((Date.UTC(b1, b2 - 1, b3) - Date.UTC(a1, a2 - 1, a3)) / 86400000); }
+    function dayLabel(n) { const d = MAPDAYS.find(x => x.day === n); return d ? d.date : ''; }
+    function copyText(t, btn) {
+      const done = () => { if (btn) { const o = btn.innerText; btn.innerText = '복사됨 ✓'; setTimeout(() => btn.innerText = o, 1200); } };
+      try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t).then(done, () => fallbackCopy(t, done)); return; } } catch (e) {}
+      fallbackCopy(t, done);
+    }
+    function fallbackCopy(t, done) { try { const ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done(); } catch (e) {} }
+
+    // ---------- Checklist data ----------
+    const CHECKS = [
+      { id: 'c01', due: '2026-11-05', g: '출발 전', t: '여권 유효기간(출국일 기준 3개월 이상)과 사본·사진 확인' },
+      { id: 'c02', due: '2026-11-06', g: '출발 전', t: 'KE921 온라인 체크인 (출발 48시간 전, 11/6 12:00경 오픈)' },
+      { id: 'c03', due: '2026-11-07', g: '출발 전', t: 'eSIM·로밍 설정하고 데이터 켜지는지 테스트' },
+      { id: 'c04', due: '2026-11-07', g: '출발 전', t: '구글맵 오프라인 지도 받기: 리스본·포르투·세비야' },
+      { id: 'c05', due: '2026-11-07', g: '출발 전', t: '볼트·우버 앱 설치, 결제카드 등록, 전화번호 인증' },
+      { id: 'c06', due: '2026-11-07', g: '출발 전', t: 'TAP·라이언에어·CP 앱 설치와 예약 연결 확인' },
+      { id: 'c07', due: '2026-11-07', g: '출발 전', t: '유럽형 C타입 멀티어댑터, 충전기, 보조배터리' },
+      { id: 'c08', due: '2026-11-07', g: '출발 전', t: '카드 해외결제 한도·PIN 확인, 컨택리스(탭) 결제 되는지 확인, 부부가 각자 카드·폰 준비 (메트로는 1인 1카드)' },
+      { id: 'c08b', due: '2026-11-07', g: '출발 전', t: '토스뱅크 외화통장을 해외 결제계좌로 연결하고 해외 ATM 출금 설정 확인 (월 5회·700달러까지 수수료 면제), 예비 카드 1장 더 챙기기' },
+      { id: 'c09', due: '2026-11-07', g: '출발 전', t: '미확정 예약 확정: 파두, 플라멩코, 투어' },
+      { id: 'c09b', due: '2026-11-07', g: '출발 전', t: '라이언에어 Flexi Plus·23kg 위탁, TAP 개인 물품·기내 가방·위탁 구매 완료 확인 (인원 수와 위탁 개수는 예약 화면에서), 포트와인은 위탁 짐에' },
+      { id: 'c32', due: '2026-11-07', g: '출발 전', t: '여행자 보험 가입 또는 카드 해외 의료·상해 보장 확인' },
+      { id: 'c33', due: '2026-11-07', g: '출발 전', t: '상비약 챙기기 (처방약은 영문 처방전이나 약 이름 메모 함께)' },
+      { id: 'c34', due: '2026-11-07', g: '출발 전', t: '여권 사본을 휴대폰과 메일에 저장, 긴급 112와 한국 대사관 연락처 메모' },
+      { id: 'c35', due: '2026-11-07', g: '출발 전', t: '알람 설정: 11/17 04:30 새벽 출발, 11/20 07:00 세비야 출발 (현지 시각 기준)' },
+      { id: 'c10', due: '2026-11-08', g: '11/8 출발·도착', t: '인천 T2 도착(출발 3시간 전 09:00 목표), 짐 위탁' },
+      { id: 'c11', due: '2026-11-08', g: '11/8 출발·도착', t: '도착 후 시계 -9시간. 입국심사(EES)는 30~90분 걸릴 수 있어요' },
+      { id: 'c12', due: '2026-11-08', g: '11/8 출발·도착', t: '로시우 플라자 호텔에 늦은 도착 알리기 (체크인 23:30까지)' },
+      { id: 'c13', due: '2026-11-08', g: '11/8 출발·도착', t: '입국장 북쪽 P2(스타벅스 뒤)에서 우버·볼트 탑승' },
+      { id: 'c13b', due: '2026-11-08', g: '11/8 출발·도착', t: '입국장 은행 ATM(Multibanco)에서 100€ 인출. 노란 Euronet은 피하고 통화 변환 질문에는 EUR/거절 선택' },
+      { id: 'c14', due: '2026-11-10', g: '11/11 리스본 ➔ 포르투', t: '포르투 호스트에게 도착 시각(약 17:30)·키 인계 방식 확인' },
+      { id: 'c15', due: '2026-11-11', g: '11/11 리스본 ➔ 포르투', t: '12:00 체크아웃, 짐 프런트 보관 요청' },
+      { id: 'c16', due: '2026-11-11', g: '11/11 리스본 ➔ 포르투', t: '13:00 호텔 출발 ➔ 13:30까지 산타 아폴로니아역 도착 (AP 133, 14:00)' },
+      { id: 'c17', due: '2026-11-11', g: '11/11 리스본 ➔ 포르투', t: '캄파냐역에서 Urbano(상벤투 행)로 환승, AP 티켓으로 무료' },
+      { id: 'c18', due: '2026-11-13', g: '11/14 투어', t: '브라가·기마랑이스 투어 픽업 바우처 시각·장소 확인' },
+      { id: 'c19', due: '2026-11-15', g: '11/16~17 새벽 이동', t: '새벽 출발이라 열쇠 반납·체크아웃 방법을 호스트에게 확인' },
+      { id: 'c20', due: '2026-11-16', g: '11/16~17 새벽 이동', t: '라이언에어 모바일 탑승권 저장 (온라인 체크인)' },
+      { id: 'c21', due: '2026-11-16', g: '11/16~17 새벽 이동', t: '세비야 호텔에 오전 도착(09:50)·짐 보관 요청 메시지' },
+      { id: 'c22', due: '2026-11-16', g: '11/16~17 새벽 이동', t: '짐 정리, 04:30 알람 설정, 일찍 취침' },
+      { id: 'c23', due: '2026-11-17', g: '11/16~17 새벽 이동', t: '04:45 볼트 앱에서 기사 배정 확인 (취소되면 우버·택시로 전환)' },
+      { id: 'c24', due: '2026-11-18', g: '11/18~19 세비야', t: 'TAP TP1103 온라인 체크인 (11/18부터 가능)' },
+      { id: 'c25', due: '2026-11-19', g: '11/18~19 세비야', t: '기념품 쇼핑 마무리 (11/20은 새벽 출발)' },
+      { id: 'c26', due: '2026-11-19', g: '11/18~19 세비야', t: '프런트에 07:00 택시 호출 예약, 체크아웃 정산' },
+      { id: 'c27', due: '2026-11-19', g: '11/18~19 세비야', t: '와인 포장(위탁 수하물), 짐 정리' },
+      { id: 'c28', due: '2026-11-20', g: '11/20 귀국', t: '07:00 호텔 출발 ➔ 07:45 세비야 공항 (TP1103 10:00)' },
+      { id: 'c29', due: '2026-11-20', g: '11/20 귀국', t: 'TAP 카운터에서 짐이 리스본까지만 가는지 확인' },
+      { id: 'c30', due: '2026-11-20', g: '11/20 귀국', t: '리스본 도착 후 T1 사물함에 짐 보관, 17:00에 시내에서 출발' },
+      { id: 'c31', due: '2026-11-20', g: '11/20 귀국', t: '18:40경 KE922 체크인, 면세 와인 구매 (2L·약 $400 이내)' }
+    ];
+    function getChecks() { return store.get('trip26_checks', {}); }
+    function toggleCheck(id) { const c = getChecks(); c[id] = !c[id]; store.set('trip26_checks', c); if (toolsCur === 'check') renderToolsBody(); renderToday(); }
+
+    // ---------- Address cards ----------
+    const ADDRS = [
+      { id: 'a1', city: 'lisbon', n: '로시우 플라자 호텔', loc: 'Rossio Plaza Hotel\nRua do Ouro 266 (Rua Áurea 266)\n1100-581 Lisboa', pid: 'lis_hotel', note: '보행자 거리라 근처에서 내려 걸을 수 있어요.' },
+      { id: 'a2', city: 'lisbon', n: '리스본 공항 출국(T1)', loc: 'Aeroporto Humberto Delgado\nTerminal 1 — Partidas', pid: 'lis_air', note: '대한항공 KE922는 T1 출국장 카운터.' },
+      { id: 'a3', city: 'lisbon', n: '산타 아폴로니아역', loc: 'Estação de Santa Apolónia\nLisboa', pid: 'santa_apolonia', note: '11/11 AP 133 승차역.' },
+      { id: 'a4', city: 'porto', n: '포르투 캄파냐역', loc: 'Estação de Porto Campanhã', pid: 'campanha', note: '택시 승차장은 역 출구 앞.' },
+      { id: 'a5', city: 'porto', n: '상벤투역', loc: 'Estação de São Bento\nPorto', pid: 'sao_bento' },
+      { id: 'a6', city: 'porto', n: '포르투 숙소 (HM Infante)', loc: 'HM Infante Riverside Apartment\nRua do Infante Dom Henrique 45\n4050-553 Porto', pid: 'porto_apt', note: '히베이라 쪽 좁은 골목이에요.' },
+      { id: 'a7', city: 'porto', n: '볼트 픽업 지점 (새벽 05:00)', loc: 'Bolsa dos Comerciantes do Porto\nRua do Infante Dom Henrique 47-53\nPorto', pid: 'porto_apt', note: '숙소(45번) 바로 옆, 11/17 05:00 볼트 예약 지점.' },
+      { id: 'a8', city: 'porto', n: '포르투 공항 출국', loc: 'Aeroporto Francisco Sá Carneiro\n(Porto) — Partidas', pid: 'opo', note: '라이언에어 FR5467 07:35.' },
+      { id: 'a9', city: 'seville', n: '세비야 공항', loc: 'Aeropuerto de Sevilla\n(San Pablo)', pid: 'svq', note: '도착은 Llegadas, 출발은 Salidas.' },
+      { id: 'a10', city: 'seville', n: '세비야 숙소 (소호 부티크 카테드랄)', loc: 'Soho Boutique Catedral\nAvenida de la Constitución 8\n41004 Sevilla', pid: 'sev_hotel', note: '보행자·트램 거리라 Puerta de Jerez 근처에서 내려도 돼요. 일부 지도에는 Petit Palace Catedral로도 표기.' }
+    ];
+    const PHRASES = {
+      pt: [
+        ['Pode levar-me a esta morada, por favor?', '이 주소로 가 주실 수 있나요?'],
+        ['Pode ligar o taxímetro, por favor?', '미터기를 켜 주시겠어요?'],
+        ['Pode parar aqui, por favor.', '여기서 세워 주세요.'],
+        ['Quanto custa até lá?', '거기까지 얼마예요?'],
+        ['Posso pagar com cartão?', '카드로 결제할 수 있나요?']
+      ],
+      es: [
+        ['¿Puede llevarme a esta dirección, por favor?', '이 주소로 가 주실 수 있나요?'],
+        ['¿Puede poner el taxímetro, por favor?', '미터기를 켜 주시겠어요?'],
+        ['Puede parar aquí, por favor.', '여기서 세워 주세요.'],
+        ['¿Cuánto cuesta hasta allí?', '거기까지 얼마예요?'],
+        ['¿Puedo pagar con tarjeta?', '카드로 결제할 수 있나요?']
+      ]
+    };
+    function showBig(id) {
+      const a = ADDRS.find(x => x.id === id); if (!a) return;
+      const lang = a.city === 'seville' ? 'es' : 'pt';
+      const ph = PHRASES[lang][0][0];
+      const ov = document.getElementById('showOverlay');
+      ov.innerHTML = `<div class="max-w-md mx-auto h-full flex flex-col">
+          <div class="flex items-center justify-between mb-4"><span class="text-xs font-bold text-slate-400">기사님께 보여주세요</span><button onclick="closeBig()" class="px-3 py-1.5 rounded-full bg-slate-900 text-white text-xs font-bold">닫기</button></div>
+          <div class="text-sm text-slate-500 mb-2">${lang === 'es' ? 'Español' : 'Português'}</div>
+          <div class="text-2xl font-extrabold text-slate-900 leading-snug mb-5">${ph}</div>
+          <div class="p-4 rounded-2xl bg-slate-100 text-slate-900"><div class="text-[11px] font-bold text-slate-500 mb-1">${esc(a.n)}</div><div class="text-3xl font-black leading-tight" style="white-space:pre-line">${esc(a.loc)}</div></div>
+          <a href="${gmPinUrl(a.pid)}" target="_blank" rel="noopener" class="mt-5 text-center py-3 rounded-2xl bg-azulejo-600 text-white font-bold text-sm">구글맵에서 위치 열기</a>
+        </div>`;
+      ov.classList.remove('hidden');
+    }
+    function closeBig() { document.getElementById('showOverlay').classList.add('hidden'); }
+
+    // ---------- Bookings ----------
+    const BOOKINGS = [
+      { sec: '✈️ 항공', rows: [
+        { t: 'KE921 · 대한항공', l: ['11/8(일) 인천 T2 12:00 ➔ 리스본 T1 18:45(도착은 예정)'] },
+        { t: 'FR5467 · 라이언에어', l: ['11/17(화) 포르투 07:35 ➔ 세비야 09:50'], code: 'C26F4J' },
+        { t: 'TP1103 · TAP', l: ['11/20(금) 세비야 10:00 ➔ 리스본 10:05'], code: 'YTJJ2G' },
+        { t: 'KE922 · 대한항공', l: ['11/20(금) 리스본 T1 21:40 ➔ 11/21(토) 인천 20:00 (도착은 예정)'] }
+      ] },
+      { sec: '🚆 기차 (CP)', rows: [
+        { t: 'AP 133 · 알파 펜둘라르', l: ['11/11(수) Lisboa Santa Apolónia 14:00 ➔ Porto Campanhã 16:48', '프로모 티켓 2명, 총 60€, 객차 1 · 좌석 11·12 (앱 티켓에서 최종 확인)'] }
+      ] },
+      { sec: '🏨 숙소', rows: [
+        { t: '로시우 플라자 호텔', l: ['11/8 ~ 11/11 (3박)', '체크인 15:00~23:30 · 체크아웃 12:00', 'Rua do Ouro 266, Lisboa'] },
+        { t: 'HM Infante Riverside Apt', l: ['11/11 ~ 11/17 (6박)', '체크인 16:00 · 체크아웃 11:00', 'Rua do Infante Dom Henrique 45, Porto'] },
+        { t: '소호 부티크 카테드랄', l: ['11/17 ~ 11/20 (3박)', '체크인 14:00 · 체크아웃 12:00', 'Avenida de la Constitución 8, Sevilla'] }
+      ] },
+      { sec: '🚕 예약한 이동', rows: [
+        { t: '볼트 · 11/17(화) 05:00', l: ['픽업: Bolsa dos Comerciantes (Rua do Infante Dom Henrique 47-53)', '목적지: 포르투 공항(OPO). 기사 정보는 픽업 직전에 공유됩니다.'] }
+      ] },
+      { sec: '🧳 수화물 규정 (구매 완료)', rows: [
+        { t: '라이언에어 FR5467 · 11/17 포르투 ➔ 세비야 (C26F4J)', l: [
+          'Flexi Plus 구매: 개인 물품 1개(40×30×20cm, 앞좌석 밑) + 기내 가방 1개(55×40×20cm, 10kg, 선반). 우선 탑승·지정좌석·패스트트랙 포함.',
+          '위탁 23kg 1개 구매 완료. 인원 수는 예약 화면에서 확인하세요.',
+          '배낭은 개인 물품, 28인치 캐리어는 위탁으로 부치세요. 배낭은 실제로 재서 40×30×20cm 안에 드는지 확인하세요.',
+          '규격이나 무게를 넘으면 게이트에서 위탁으로 바뀌고 약 €70~75가 붙어요.'
+        ] },
+        { t: 'TAP TP1103 · 11/20 세비야 ➔ 리스본 (YTJJ2G)', l: [
+          '개인 물품 1개, 기내 가방(55×40×25cm, 10kg), 위탁 수하물 구매 완료. 위탁은 최대 23kg이고 개수는 예약 화면에서 확인하세요.',
+          '28인치 캐리어는 위탁으로 부쳐요. 세 변 합이 158cm 이하, 23kg 이하여야 해요.',
+          '게이트에서 규격을 넘기면 약 €70이 추가돼요.'
+        ] },
+        { t: '포트와인·액체류', l: [
+          '포트와인은 100ml를 넘어 기내 반입이 안 돼요. 위탁 짐에 넣고 충격 방지 포장을 하세요.'
+        ] },
+        { t: '리스본 → 인천 (KE922)', l: [
+          'TAP과 KE922는 따로 예약돼 있어서 리스본에서 짐을 찾아 T1 대한항공 카운터에서 다시 부쳐야 해요.',
+          '대한항공 위탁 규정은 아직 확인하지 않았으니 출발 전에 꼭 확인하세요.'
+        ] }
+      ] },
+      { sec: '🎟️ 투어·공연', rows: [
+        { t: '마이리얼트립 시티투어(리스본·포르투), 두루 와이너리, 파두, 플라멩코', l: ['예약 상세가 정해지면 여기에 추가할 수 있어요. 바우처 시각·장소는 예약 앱에서 확인하세요.'] }
+      ] }
+    ];
+
+    // ---------- Expenses ----------
+    const CATS = ['식비', '카페·간식', '교통', '입장·투어', '쇼핑', '숙박', '기타'];
+    let expCat = '식비', expDay = 0, toolsCur = 'addr';
+    function getExp() { return store.get('trip26_exp', []); }
+    function getRate() { return store.get('trip26_rate', 1750); }
+    function setRate(v) { const n = parseFloat(v); if (n > 0) { store.set('trip26_rate', n); renderToolsBody(); } }
+    function addExp() {
+      const amt = parseFloat(document.getElementById('expAmt').value);
+      if (!(amt > 0)) return;
+      const list = getExp();
+      const memo = document.getElementById('expMemo').value.trim();
+      list.push({ id: Date.now(), day: expDay, eur: Math.round(amt * 100) / 100, cat: expCat, memo });
+      store.set('trip26_exp', list);
+      renderToolsBody(); renderToday();
+    }
+    function delExp(id) { store.set('trip26_exp', getExp().filter(e => e.id !== id)); renderToolsBody(); renderToday(); }
+    function selectExpCat(c) { const a = document.getElementById('expAmt').value, m = document.getElementById('expMemo').value; expCat = c; renderToolsBody(true); document.getElementById('expAmt').value = a; document.getElementById('expMemo').value = m; }
+    function selectExpDay(d) { expDay = parseInt(d, 10); }
+    function fmtKRW(n) { return Math.round(n).toLocaleString('ko-KR') + '원'; }
+    function fmtEUR(n) { return (Math.round(n * 100) / 100).toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '€'; }
+    function expSummaryText() {
+      const list = getExp(), rate = getRate();
+      const tot = list.reduce((a, e) => a + e.eur, 0);
+      const lines = [`신혼여행 지출 (환율 ${rate}원/€)`, `합계 ${fmtEUR(tot)} ≈ ${fmtKRW(tot * rate)}`];
+      MAPDAYS.forEach(d => { const s = list.filter(e => e.day === d.day).reduce((a, e) => a + e.eur, 0); if (s) lines.push(`D${d.day} ${d.date}: ${fmtEUR(s)}`); });
+      const pre = list.filter(e => e.day === 0).reduce((a, e) => a + e.eur, 0); if (pre) lines.push(`기타: ${fmtEUR(pre)}`);
+      return lines.join('\n');
+    }
+
+    // ---------- Tools tab ----------
+    function toolsTab(name) { toolsCur = name; renderToolsBody(); }
+    function openTools(name, day) { if (day !== undefined) expDay = day; toolsCur = name; switchTab('tools'); }
+    function renderToolsBody(keepScroll) {
+      const tabs = [['addr', '📍 주소 카드'], ['book', '🎫 예약'], ['check', '✅ 체크리스트'], ['exp', '💶 가계부']];
+      document.getElementById('toolsTabs').innerHTML = tabs.map(([k, l]) => `<button onclick="toolsTab('${k}')" class="flex-shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-full border ${toolsCur === k ? 'bg-azulejo-600 text-white border-azulejo-600' : 'bg-white text-slate-600 border-slate-200'}">${l}</button>`).join('');
+      const body = document.getElementById('toolsBody');
+      const y = window.scrollY;
+      if (toolsCur === 'addr') body.innerHTML = renderAddr();
+      else if (toolsCur === 'book') body.innerHTML = renderBook();
+      else if (toolsCur === 'check') body.innerHTML = renderCheck();
+      else body.innerHTML = renderExp();
+      if (keepScroll) window.scrollTo(0, y);
+    }
+    function renderAddr() {
+      const groups = [['lisbon', '리스본'], ['porto', '포르투'], ['seville', '세비야']];
+      return `<p class="text-[11px] text-slate-500 leading-snug mb-2">"보여주기"를 누르면 큰 글씨로 주소와 현지어 문장이 나와요. 기사님께 화면을 그대로 보여주세요.</p>` +
+        groups.map(([c, l]) => `<div class="bg-white rounded-2xl border border-slate-200 p-3 mb-2.5 space-y-2"><h4 class="text-xs font-bold text-slate-900">${l}</h4>` +
+          ADDRS.filter(a => a.city === c).map(a => `
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+              <div class="text-[11px] font-bold text-slate-800">${esc(a.n)}</div>
+              <div class="text-[11px] text-slate-700 mt-0.5 leading-snug" style="white-space:pre-line">${esc(a.loc)}</div>
+              ${a.note ? `<div class="text-[10px] text-slate-500 mt-0.5">${esc(a.note)}</div>` : ''}
+              <div class="flex gap-1.5 mt-1.5">
+                <button onclick="showBig('${a.id}')" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-900 text-white">📢 보여주기</button>
+                <button onclick="copyText(ADDRS.find(x=>x.id==='${a.id}').loc.replace(/\\n/g,', '), this)" class="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-white border border-slate-300 text-slate-700">주소 복사</button>
+                <a href="${gmPinUrl(a.pid)}" target="_blank" rel="noopener" class="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-azulejo-600 text-white">구글맵</a>
+              </div>
+            </div>`).join('') + '</div>').join('') +
+        `<div class="bg-white rounded-2xl border border-slate-200 p-3 space-y-1.5"><h4 class="text-xs font-bold text-slate-900">택시·우버 문장</h4>
+          ${[['pt', '🇵🇹 포르투갈어(리스본·포르투)'], ['es', '🇪🇸 스페인어(세비야)']].map(([k, l]) => `<div class="text-[11px] font-bold text-slate-700 mt-1">${l}</div>` + PHRASES[k].map(p => `<div class="p-2 rounded-lg bg-slate-50 border border-slate-100"><div class="text-[11px] font-semibold text-slate-900">${p[0]}</div><div class="text-[10px] text-slate-500">${p[1]}</div></div>`).join('')).join('')}
+        </div>`;
+    }
+    function renderBook() {
+      return BOOKINGS.map(b => `<div class="bg-white rounded-2xl border border-slate-200 p-3 mb-2.5 space-y-2"><h4 class="text-xs font-bold text-slate-900">${b.sec}</h4>` +
+        b.rows.map(r => `<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+            <div class="flex items-center justify-between gap-2"><div class="text-[11px] font-bold text-slate-800">${esc(r.t)}</div>${r.code ? `<button onclick="copyText('${r.code}', this)" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 flex-shrink-0">${r.code} 복사</button>` : ''}</div>
+            ${r.l.map(x => `<div class="text-[11px] text-slate-600 leading-snug mt-0.5">${esc(x)}</div>`).join('')}
+          </div>`).join('') + '</div>').join('') +
+        '<p class="text-[10px] text-slate-400 leading-snug">대한항공 예약번호와 투어·공연 바우처는 아직 없어요. 알려주시면 이 목록에 넣을 수 있어요. 도착 시각이 "예정"인 항목은 항공사 앱에서 최종 확인하세요.</p>';
+    }
+    function renderCheck() {
+      const checks = getChecks(), today = isoToday();
+      const total = CHECKS.length, done = CHECKS.filter(c => checks[c.id]).length;
+      const groups = []; CHECKS.forEach(c => { if (!groups.includes(c.g)) groups.push(c.g); });
+      return `<div class="bg-white rounded-2xl border border-slate-200 p-3 mb-2.5">
+          <div class="flex items-center justify-between text-[11px] font-bold text-slate-800"><span>진행률</span><span>${done} / ${total}</span></div>
+          <div class="h-2 bg-slate-100 rounded-full mt-1.5 overflow-hidden"><div class="h-full bg-azulejo-600" style="width:${Math.round(done / total * 100)}%"></div></div>
+          <p class="text-[10px] text-slate-400 mt-1.5">체크 상태는 이 기기의 브라우저에 저장돼요. 저장이 안 되는 환경이면 새로고침할 때 초기화될 수 있어요.</p>
+        </div>` + groups.map(g => `<div class="bg-white rounded-2xl border border-slate-200 p-3 mb-2.5 space-y-1.5"><h4 class="text-xs font-bold text-slate-900">${g}</h4>` +
+          CHECKS.filter(c => c.g === g).map(c => {
+            const on = !!checks[c.id];
+            const late = !on && c.due <= today;
+            const tag = late ? (c.due === today ? '<span class="text-[9px] font-bold text-white bg-rose-500 rounded px-1 ml-1">오늘</span>' : '<span class="text-[9px] font-bold text-white bg-amber-500 rounded px-1 ml-1">지남</span>') : '';
+            return `<label class="flex items-start gap-2 p-2 rounded-lg ${on ? 'bg-slate-50' : 'bg-white border border-slate-100'} cursor-pointer"><input type="checkbox" ${on ? 'checked' : ''} onchange="toggleCheck('${c.id}')" class="mt-0.5 w-4 h-4 accent-teal-600"><span class="text-[11px] leading-snug ${on ? 'text-slate-400 line-through' : 'text-slate-800'}">${c.t}${tag}<span class="text-[9px] text-slate-400 ml-1">${c.due.slice(5).replace('-', '/')}</span></span></label>`;
+          }).join('') + '</div>').join('');
+    }
+    function renderExp() {
+      const list = getExp(), rate = getRate();
+      const tot = list.reduce((a, e) => a + e.eur, 0);
+      const dayOpts = [`<option value="0" ${expDay === 0 ? 'selected' : ''}>출발 전·기타</option>`].concat(MAPDAYS.map(d => `<option value="${d.day}" ${expDay === d.day ? 'selected' : ''}>D${d.day} ${d.date}</option>`)).join('');
+      const byDay = [0, ...MAPDAYS.map(d => d.day)].map(n => ({ n, items: list.filter(e => e.day === n) })).filter(x => x.items.length);
+      const byCat = CATS.map(c => ({ c, s: list.filter(e => e.cat === c).reduce((a, e) => a + e.eur, 0) })).filter(x => x.s > 0);
+      return `<div class="bg-white rounded-2xl border border-slate-200 p-3 mb-2.5 space-y-2">
+          <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-900">환율</span>
+            <span class="text-[11px] text-slate-700">1€ = <input id="rateIn" type="number" inputmode="decimal" value="${rate}" onchange="setRate(this.value)" class="w-20 border border-slate-300 rounded px-1.5 py-0.5 text-right text-[11px]">원</span></div>
+          <p class="text-[10px] text-slate-400 leading-snug">기본값 1,750원은 5월 시장 환율을 참고한 대략값이에요. 실제 환전·카드 환율에 맞게 고쳐서 쓰세요.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-3 mb-2.5 space-y-2">
+          <h4 class="text-xs font-bold text-slate-900">지출 추가</h4>
+          <select onchange="selectExpDay(this.value)" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-[12px]">${dayOpts}</select>
+          <div class="flex gap-2"><input id="expAmt" type="number" inputmode="decimal" step="0.01" placeholder="금액(€)" class="flex-1 border border-slate-300 rounded-lg px-2 py-1.5 text-[13px]"><input id="expMemo" type="text" placeholder="메모(선택)" class="flex-1 border border-slate-300 rounded-lg px-2 py-1.5 text-[13px]"></div>
+          <div class="flex flex-wrap gap-1.5">${CATS.map(c => `<button onclick="selectExpCat('${c}')" class="text-[11px] font-bold px-2.5 py-1 rounded-full border ${expCat === c ? 'bg-azulejo-600 text-white border-azulejo-600' : 'bg-white text-slate-600 border-slate-200'}">${c}</button>`).join('')}</div>
+          <button onclick="addExp()" class="w-full py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">추가</button>
+        </div>
+        <div class="bg-gradient-to-r from-azulejo-900 to-azulejo-700 text-white rounded-2xl p-3 mb-2.5">
+          <div class="text-[10px] opacity-80">합계</div><div class="text-xl font-extrabold">${fmtEUR(tot)}</div><div class="text-xs opacity-90">≈ ${fmtKRW(tot * rate)}</div>
+          ${byCat.length ? `<div class="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5 text-[10px] opacity-90">${byCat.map(x => `<span>${x.c} ${fmtEUR(x.s)}</span>`).join('')}</div>` : ''}
+        </div>
+        ${byDay.map(g => { const s = g.items.reduce((a, e) => a + e.eur, 0); return `<div class="bg-white rounded-2xl border border-slate-200 p-3 mb-2.5 space-y-1.5">
+            <div class="flex items-center justify-between"><h4 class="text-xs font-bold text-slate-900">${g.n ? `D${g.n} ${dayLabel(g.n)}` : '출발 전·기타'}</h4><span class="text-[11px] font-bold text-slate-700">${fmtEUR(s)} · ${fmtKRW(s * rate)}</span></div>
+            ${g.items.map(e => `<div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-slate-50 text-[11px]"><div class="min-w-0"><b>${e.cat}</b>${e.memo ? ' · ' + esc(e.memo) : ''}</div><div class="flex items-center gap-2 flex-shrink-0"><span class="font-bold">${fmtEUR(e.eur)}</span><button onclick="delExp(${e.id})" class="text-slate-400 text-xs">✕</button></div></div>`).join('')}</div>`; }).join('')}
+        ${list.length ? `<button onclick="copyText(expSummaryText(), this)" class="w-full py-2 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-700">요약 복사</button>` : '<p class="text-[11px] text-slate-400 text-center">아직 기록이 없어요.</p>'}
+        <p class="text-[10px] text-slate-400 mt-2 leading-snug">기록은 이 기기의 브라우저에 저장돼요. 저장이 안 되는 환경이면 새로고침할 때 사라질 수 있으니 중간중간 "요약 복사"로 남겨두세요.</p>`;
+    }
+
+    // ---------- Today card ----------
+    let todayPick = null;
+    function pickToday(n) { todayPick = n; renderToday(); }
+    function renderToday() {
+      const el = document.getElementById('todayCard'); if (!el) return;
+      const iso = isoToday();
+      const diff = dayDiff(iso, TRIP.startISO);
+      const dayNum = (diff <= 0 && dayDiff(iso, TRIP.endISO) >= 0) ? (1 - diff) : null; // diff 0 -> day 1
+      const state = diff > 0 ? 'before' : (dayNum ? 'during' : 'after');
+      const view = todayPick || (state === 'during' ? dayNum : 1);
+      const checks = getChecks();
+      const ref = state === 'during' ? dayISO(view) : iso;
+      let due = [...CHECKS.filter(c => !checks[c.id] && c.due < ref).slice(-2), ...CHECKS.filter(c => !checks[c.id] && c.due === ref)].slice(0, 5);
+      let dueTitle = '챙길 것';
+      if (!due.length && state !== 'after') { due = CHECKS.filter(c => !checks[c.id] && c.due > ref).slice(0, 3); dueTitle = '곧 할 일'; }
+      const d = itineraryData.find(x => x.day === view), md = MAPDAYS.find(x => x.day === view);
+      const exp = getExp(), rate = getRate();
+      const daySum = exp.filter(e => e.day === view).reduce((a, e) => a + e.eur, 0);
+      const chips = MAPDAYS.map(x => `<button onclick="pickToday(${x.day})" class="flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full border ${x.day === view ? 'bg-azulejo-600 text-white border-azulejo-600' : 'bg-white text-slate-500 border-slate-200'}">D${x.day}</button>`).join('');
+      let head;
+      if (state === 'before') head = `<div class="text-[10px] font-bold text-amber-700">출발까지</div><div class="text-2xl font-black text-slate-900 leading-none">D-${diff}</div><div class="text-[11px] text-slate-500 mt-0.5">11/8(일) 12:00 인천 T2 출발 (KE921)</div>`;
+      else if (state === 'during') head = `<div class="text-[10px] font-bold text-azulejo-700">오늘 · D${dayNum} · ${dayLabel(dayNum)}</div>`;
+      else head = `<div class="text-[10px] font-bold text-slate-500">여행이 끝났어요</div>`;
+      const timeline = d ? d.timeline.map(t => `<div class="flex gap-2 text-[11px] leading-snug"><span class="font-bold text-azulejo-700 w-14 flex-shrink-0">${t.time}</span><span class="text-slate-700">${t.desc}</span></div>`).join('') : '';
+      const fl = d && d.flights ? d.flights.map(f => `<div class="px-2 py-1 rounded-lg bg-azulejo-50 border border-azulejo-100 text-[11px]"><b class="text-azulejo-800">✈️ ${f.code}</b> ${f.route}</div>`).join('') : '';
+      const legBtns = d && d.legs ? d.legs.map(id => { const lg = transitLegs.find(x => x.id === id); return lg ? `<button onclick="openLeg('${id}')" class="text-[10px] font-semibold px-2 py-1 rounded-full bg-azulejo-50 text-azulejo-700 border border-azulejo-100">🧭 ${lg.short}</button>` : ''; }).join('') : '';
+      el.innerHTML = `<div class="bg-white rounded-2xl border border-amber-200 shadow-sm p-3 space-y-2.5">
+          <div class="flex items-start justify-between gap-2">${head}<span class="text-[10px] text-slate-400 flex-shrink-0">${(state === 'during' && view === dayNum) ? '' : '미리보기'}</span></div>
+          <div class="flex gap-1 overflow-x-auto" style="scrollbar-width:none">${chips}</div>
+          ${d ? `<div><div class="text-xs font-extrabold text-slate-900">D${view} · ${d.date} · ${d.title}</div><div class="text-[10px] text-slate-500 mt-0.5">🏨 ${d.hotel}</div></div>${fl ? `<div class="space-y-1">${fl}</div>` : ''}<div class="space-y-1.5">${timeline}</div>` : ''}
+          ${due.length ? `<div class="p-2 rounded-lg bg-rose-50 border border-rose-200"><div class="text-[10px] font-bold text-rose-700 mb-0.5">${dueTitle}</div>${due.map(c => `<div class="text-[11px] text-rose-900 leading-snug">• ${c.t}</div>`).join('')}<button onclick="openTools('check')" class="mt-1 text-[10px] font-bold text-rose-700 underline">체크리스트 열기</button></div>` : ''}
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="openDayMap(${view})" class="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-azulejo-600 text-white">🗺️ 지도</button>
+            <button onclick="openTools('addr')" class="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-slate-900 text-white">📢 주소 카드</button>
+            <button onclick="openTools('exp', ${view})" class="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-white border border-slate-300 text-slate-700">💶 지출 추가${daySum ? ' · ' + fmtEUR(daySum) : ''}</button>
+            ${legBtns}
+          </div>
+        </div>`;
+    }
+
     // 12-day Full Itinerary Dataset based on documents
     const itineraryData = [
       {
         day: 1,
-        date: "11/8 (금)",
+        date: "11/8 (일)",
         city: "lisbon",
         title: "리스본 도착 및 바이샤 지구의 첫인상",
         hotel: "로시우 플라자 호텔",
-        badge: "리스본 1일차",
+        badge: "리스본 1일차 (도착)",
+        flights: [{ code: "KE921", route: "인천 T2 12:00 ➔ 리스본 T1 18:45", meta: "11/8(일) · 비행 약 15시간 45분 · 대한항공 · 도착은 예정" }],
+        legs: ["leg-a"],
         timeline: [
-          { time: "오후", desc: "리스본 공항 도착 ➔ e-gate(자동출입국심사) 신속 통과 ➔ 2층 출국장 Kiss & Fly에서 우버 탑승(10~15€) 또는 메트로로 로시우 플라자 호텔 체크인." },
-          { time: "저녁", desc: "로시우 광장과 아우구스타 거리 산책. 파브리카 데 나타에서 갓 구운 에그타르트(나타)와 비카(에스프레소)로 여독 풀기." }
+          { time: "12:00", desc: "인천 T2에서 대한항공 KE921 출발 ➔ 리스본 T1 도착 예정 18:45 (비행 약 15시간 45분). 한국이 9시간 빠르니 도착하면 시계를 -9시간으로." },
+          { time: "19:30~", desc: "입국심사: 첫 입국이라 EES(지문·얼굴 등록) 때문에 30~90분 걸릴 수 있어요 ➔ 짐 수령 ➔ 입국장 북쪽 P2에서 우버·볼트(7~15€) 또는 메트로로 호텔 이동. 호텔 체크인은 23:30까지(프런트 24시간)이니 늦는 도착 시간을 미리 알려두세요." },
+          { time: "늦은 저녁", desc: "체크인 후 로시우 광장 야간 산책과 가벼운 식사. 에그타르트(나타)와 비카(에스프레소)는 영업시간을 확인하고, 안 되면 이튿날 아침으로." }
         ],
-        docentNote: "호텔이 로시우 광장에 접해 있어 트램, 메트로, 도보 산책 동선이 최적입니다."
+        docentNote: "저녁 도착이라 첫날은 무리하지 않는 게 좋습니다. 호텔이 로시우 광장에 접해 있어 도착 후 가볍게 걸어 나오기 좋습니다."
       },
       {
         day: 2,
-        date: "11/9 (토)",
+        date: "11/9 (월)",
         city: "lisbon",
         title: "알파마 미로 골목과 파두(Fado)의 밤",
         hotel: "로시우 플라자 호텔",
@@ -893,7 +2012,7 @@
       },
       {
         day: 3,
-        date: "11/10 (일)",
+        date: "11/10 (화)",
         city: "lisbon",
         title: "벨렝 지구 대항해 역사 & 환상 일몰",
         hotel: "로시우 플라자 호텔",
@@ -907,25 +2026,27 @@
       },
       {
         day: 4,
-        date: "11/11 (월)",
+        date: "11/11 (수)",
         city: "porto",
         title: "리스본 ➔ 포르투 AP 고속열차 이동 & 히베이라 야경",
-        hotel: "상벤투역 인근 에어비앤비",
+        hotel: "HM Infante Riverside Apt (히베이라, Rua do Infante Dom Henrique 45)",
         badge: "포르투 1일차 (이동)",
+        legs: ["leg-b", "leg-c"],
         timeline: [
-          { time: "13:00", desc: "로시우 광장 기념품 숍(아줄레주, 정어리 통조림, 코르크) 쇼핑 ➔ 산타 아폴로니아 또는 오리엔테 역 이동." },
+          { time: "12:00", desc: "호텔 체크아웃 ➔ 로시우 광장·루아 아우구스타에서 기념품(아줄레주, 정어리 통조림, 코르크) 쇼핑 (짐은 프런트에 맡겨둘 수 있어요)." },
+          { time: "13:00", desc: "호텔에서 우버·볼트로 산타 아폴로니아역 출발(10~15분) ➔ 13:30까지 도착해 전광판에서 승강장 확인. 예약 화면 기준 승차역은 산타 아폴로니아입니다." },
           { time: "14:00", desc: "AP 133 열차 출발 (1등석 C1 L11, L12) ➔ 16:48 포르투 캄파냐(Campanhã)역 도착." },
-          { time: "17:00", desc: "캄파냐역에서 상벤투역 행 로컬열차(Urbanos) 무료 환승 ➔ 에어비앤비 체크인." },
+          { time: "17:00", desc: "캄파냐역에서 São Bento 행 근교열차(Urbano, 4~5분) 무료 환승 ➔ 도보 9분 ➔ HM Infante Riverside Apt 체크인(16:00~)." },
           { time: "저녁", desc: "도우로 강변 히베이라(Ribeira) 지구를 거닐며 동 루이스 1세 다리의 환상적인 조명 아래 저녁 식사." }
         ],
         docentNote: "AP 기차표 소지자는 캄파냐에서 상벤투역까지 추가 요금 없이 무료 환승 가능합니다."
       },
       {
         day: 5,
-        date: "11/12 (화)",
+        date: "11/12 (목)",
         city: "porto",
         title: "포르투 5대 명소 감성 스냅촬영 & 파두의 밤",
-        hotel: "상벤투역 인근 에어비앤비",
+        hotel: "HM Infante Riverside Apt (히베이라, Rua do Infante Dom Henrique 45)",
         badge: "포르투 2일차",
         timeline: [
           { time: "오전/낮", desc: "인생샷 스냅촬영: 상벤투역(2만장 아줄레주) ➔ 알마스 예배당 ➔ 히베이라 강변 ➔ 동 루이스 다리 상층부 ➔ 모루 정원." },
@@ -936,10 +2057,10 @@
       },
       {
         day: 6,
-        date: "11/13 (수)",
+        date: "11/13 (금)",
         city: "porto",
         title: "가이아 언덕 테일러 와이너리 집중 투어",
-        hotel: "상벤투역 인근 에어비앤비",
+        hotel: "HM Infante Riverside Apt (히베이라, Rua do Infante Dom Henrique 45)",
         badge: "포르투 3일차",
         timeline: [
           { time: "오후", desc: "도우로강을 건너 빌라 노바 드 가이아(Gaia) 언덕으로 이동 ➔ 테일러 와이너리(Taylor's) 방문." },
@@ -950,10 +2071,10 @@
       },
       {
         day: 7,
-        date: "11/14 (목)",
+        date: "11/14 (토)",
         city: "porto",
         title: "전용 투어: 브라가 & 기마랑이스 일일 역사 투어",
-        hotel: "상벤투역 인근 에어비앤비",
+        hotel: "HM Infante Riverside Apt (히베이라, Rua do Infante Dom Henrique 45)",
         badge: "포르투 4일차 (근교)",
         timeline: [
           { time: "오전", desc: "포르투갈의 종교 수도 브라가(Braga) 이동 ➔ 봉 제주스 성당의 바로크 지그재그 순례 계단과 감각의 분수 관람." },
@@ -964,48 +2085,54 @@
       },
       {
         day: 8,
-        date: "11/15 (금)",
+        date: "11/15 (일)",
         city: "porto",
         title: "클래식 건축 & 클레리구스 '스피리투스' 조명 쇼",
-        hotel: "상벤투역 인근 에어비앤비",
+        hotel: "HM Infante Riverside Apt (히베이라, Rua do Infante Dom Henrique 45)",
         badge: "포르투 5일차",
         timeline: [
           { time: "낮", desc: "포르투 대성당(Sé) 관람 후 팔라시오 다 볼사(Palácio da Bolsa)의 눈부신 '아라비아의 방' 입장." },
           { time: "일몰", desc: "클레리구스 종탑에 올라 포르투 360도 전경 감상." },
           { time: "야간", desc: "클레리구스 교회 내부에서 펼쳐지는 '스피리투스(Spiritus)' 입체 미디어아트 조명 쇼 관람." }
         ],
-        docentNote: "스피리투스 쇼는 음악과 빛이 바로크 석조 벽면을 감싸는 몰입형 예술로事前 예약이 안전합니다."
+        docentNote: "스피리투스 쇼는 음악과 빛이 바로크 석조 벽면을 감싸는 몰입형 예술로 사전 예약이 안전합니다."
       },
       {
         day: 9,
-        date: "11/16 (토)",
+        date: "11/16 (월)",
         city: "porto",
         title: "도우로 밸리 투어 또는 WOW 문화 지구 & 6개 다리 크루즈",
-        hotel: "상벤투역 인근 에어비앤비",
+        hotel: "HM Infante Riverside Apt (히베이라, Rua do Infante Dom Henrique 45)",
         badge: "포르투 6일차",
+        legs: ["leg-d"],
         timeline: [
           { time: "낮", desc: "WOW 포르투 복합 문화지구 탐방 또는 도우로강 6개 다리 크루즈 탑승하여 강 위에서 에펠의 철교 감상." },
-          { time: "해질녘", desc: "모루 정원(Jardim do Morro) 잔디밭에 앉아 마지막 포르투의 황금빛 노을 배웅." }
+          { time: "해질녘", desc: "모루 정원(Jardim do Morro) 잔디밭에 앉아 마지막 포르투의 황금빛 노을 배웅." },
+          { time: "밤", desc: "내일 07:35 비행 대비: 짐 정리, 05:00 볼트 예약 재확인(앱), 라이언에어 온라인 체크인 확인. 일찍 취침." }
         ],
         docentNote: "모루 정원은 거리 버스커의 음악과 함께 노을을 바라보는 포르투 최고의 로맨틱 스팟입니다."
       },
       {
         day: 10,
-        date: "11/17 (일)",
+        date: "11/17 (화)",
         city: "seville",
-        title: "포르투 ➔ 스페인 세비야 이동 & 대성당 첫 야경",
-        hotel: "소호 부티크 카테드랄",
+        title: "포르투 ➔ 세비야 아침 비행(07:35) & 대성당 첫 야경",
+        hotel: "소호 부티크 카테드랄 (Avenida de la Constitución 8)",
         badge: "세비야 1일차 (이동)",
+        legs: ["leg-d", "leg-e"],
+        flights: [{ code: "FR5467", route: "포르투 OPO 07:35 ➔ 세비야 SVQ 09:50", meta: "11/17(화) · 비행 1시간 15분 · 라이언에어 · 스페인이 1시간 빠름" }],
         timeline: [
-          { time: "오전", desc: "도우로 강변 카페에서 마지막 에스프레소 ➔ 세비야로 국경 이동 (직항 항공편 또는 고속버스)." },
-          { time: "오후", desc: "세비야 도착 후 대성당 100m 앞 '소호 부티크 카테드랄' 호텔 체크인." },
+          { time: "05:00", desc: "예약한 볼트로 포르투 공항 출발 (픽업: 숙소 바로 옆 Bolsa dos Comerciantes 앞). 04:45에 앱에서 기사 배정 확인, 05:30경 공항 도착." },
+          { time: "07:35", desc: "라이언에어 FR5467 포르투 출발 ➔ 09:50 세비야 공항 도착 (스페인은 포르투갈보다 1시간 빠름)." },
+          { time: "오전", desc: "공항에서 시내로 이동(택시 또는 공항버스) ➔ 체크인은 14:00부터이므로 호텔에 짐을 먼저 맡기고 대성당 주변 카페에서 브런치." },
+          { time: "14:00", desc: "소호 부티크 카테드랄 체크인 ➔ 짧게 휴식." },
           { time: "저녁", desc: "조명을 받아 웅장하게 빛나는 세비야 대성당과 히랄다 탑 주변 골목 타파스 바 투어." }
         ],
         docentNote: "호텔에서 대성당이 도보 1분 거리라 언제든 쉬어갈 수 있는 최적의 안달루시아 베이스캠프입니다."
       },
       {
         day: 11,
-        date: "11/18 (월)",
+        date: "11/18 (수)",
         city: "seville",
         title: "세비야 대성당 & 히랄다 & 정통 플라멩코",
         hotel: "소호 부티크 카테드랄",
@@ -1019,27 +2146,38 @@
       },
       {
         day: 12,
-        date: "11/19 (화)",
+        date: "11/19 (목)",
         city: "seville",
         title: "스페인 광장의 낭만과 안달루시아 다이닝",
         hotel: "소호 부티크 카테드랄",
         badge: "세비야 3일차",
         timeline: [
           { time: "오전", desc: "스페인 광장(Plaza de España)에서 48개 주 역사 타일 벤치 찾기 & 수로 보트 체험." },
-          { time: "오후", desc: "마리아 루이사 공원의 시원한 그늘 산책 및 구시가지 감성 기념품 쇼핑." },
-          { time: "저녁", desc: "정통 이베리코 하몬과 상그리아를 곁들인 마지막 밤 만찬." }
+          { time: "오후", desc: "마리아 루이사 공원의 시원한 그늘 산책 및 구시가지 감성 기념품 쇼핑. 내일은 새벽에 출발하니 기념품 쇼핑은 오늘 끝내세요." },
+          { time: "저녁", desc: "정통 이베리코 하몬과 상그리아를 곁들인 마지막 밤 만찬." },
+          { time: "밤", desc: "내일 07:00 공항 출발 대비: 짐 정리, 프런트에 07:00 택시 호출 예약 부탁, TAP 앱 체크인(11/18부터 가능) 확인. 일찍 취침." }
         ],
         docentNote: "스페인 광장은 해 질 녘 붉은 벽돌과 석양이 어우러질 때 가장 눈부신 풍경을 자아냅니다."
       },
       {
         day: 13,
-        date: "11/20 (수)",
+        date: "11/20 (금)",
         city: "seville",
-        title: "12박 13일 여정 마무리 및 귀국",
-        hotel: "체크아웃",
+        title: "세비야 ➔ 리스본 ➔ 시내 자유시간 ➔ 귀국 (인천 도착 11/21)",
+        hotel: "체크아웃 (07:00 전 출발, 전날 정산 권장)",
         badge: "마지막 날",
+        legs: ["leg-f", "leg-g"],
+        flights: [
+          { code: "TP1103", route: "세비야 SVQ 10:00 ➔ 리스본 LIS 10:05", meta: "11/20(금) · 비행 1시간 05분 · TAP · 포르투갈이 1시간 느림" },
+          { code: "KE922", route: "리스본 T1 21:40 ➔ 인천 20:00 (+1일)", meta: "11/20(금) 출발 · 11/21(토) 도착 · 비행 약 13시간 20분 · 대한항공 · 도착은 예정" }
+        ],
         timeline: [
-          { time: "오전", desc: "소호 부티크 체크아웃 ➔ 짐 정리 및 택스리펀 영수증 확인 ➔ 공항 이동 후 안전하게 귀국길." }
+          { time: "07:00", desc: "호텔 출발 ➔ 세비야 공항 (프런트에 전날 호출 예약한 택시). 07:45~08:00 공항 도착을 목표로 하세요." },
+          { time: "10:00", desc: "TAP TP1103 세비야 출발 ➔ 10:05 리스본 도착 (포르투갈은 1시간 느려 비행 1시간 05분)." },
+          { time: "10:30~", desc: "짐을 찾고 T1 공항 사물함에 맡긴 뒤 메트로로 시내 이동(25~30분). 인천행 짐은 어차피 리스본에서 다시 부쳐야 합니다." },
+          { time: "11:30~17:00", desc: "리스본 시내 자유시간: 점심, 루아 아우구스타 쇼핑, 마지막 에그타르트. 17:00에는 공항으로 출발하세요." },
+          { time: "18:00경", desc: "공항 복귀 ➔ 사물함에서 짐 찾기 ➔ 18:40경 대한항공 체크인 오픈(T1 출국장). 보안·출국심사 후 면세점에서 포트와인 구매." },
+          { time: "21:40", desc: "대한항공 KE922 리스본 출발 ➔ 11/21(토) 20:00 인천 도착 예정 (비행 약 13시간 20분)." }
         ],
         docentNote: "바람과 파두, 와인과 대성당이 남긴 깊은 여운을 가슴에 품고 일상으로 복귀합니다."
       }
@@ -1082,6 +2220,13 @@
             <span>🏨 <strong>거점:</strong> ${item.hotel}</span>
           </div>
 
+          ${(item.flights || []).map(f => `
+            <div class="bg-azulejo-50 border border-azulejo-100 rounded-lg px-2.5 py-1.5 text-[11px] leading-snug">
+              <div class="font-bold text-azulejo-800">✈️ ${f.code} · ${f.route}</div>
+              <div class="text-slate-600">${f.meta}</div>
+            </div>
+          `).join('')}
+
           <!-- Collapsible Timeline Details -->
           <div id="day-${item.day}" class="hidden pt-2.5 border-t border-slate-100 space-y-2 text-xs">
             <div class="space-y-1.5">
@@ -1091,6 +2236,13 @@
                   <span class="text-slate-700 leading-relaxed">${t.desc}</span>
                 </div>
               `).join('')}
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="openDayMap(${item.day})" class="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-azulejo-600 text-white active:scale-95 transition">🗺️ 이날 지도·경로</button>
+              ${(item.legs || []).map(id => {
+                const lg = transitLegs.find(x => x.id === id);
+                return lg ? `<button onclick="openLeg('${id}')" class="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-azulejo-50 text-azulejo-700 border border-azulejo-100 active:scale-95 transition">🧭 ${lg.short}</button>` : '';
+              }).join('')}
             </div>
             <div class="bg-amber-50/70 p-2.5 rounded-lg border border-amber-200/80 text-[11px] text-amber-900 leading-tight">
               <strong>🎙️ 도슨트 팁:</strong> ${item.docentNote}
@@ -1146,6 +2298,8 @@
       }
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (tabId === 'map') onMapShown();
+      if (tabId === 'tools') renderToolsBody();
     }
 
     // Docent Subcity Switch
@@ -1413,8 +2567,19 @@
 
       // Keyword searchable items (Enhanced with No-Wait Restaurants)
       const searchItems = [
+      { text: "오늘 일정 D-day 카운트다운", tab: "home" },
+      { text: "도구 주소 카드 택시 기사에게 보여주기", tab: "tools" },
+      { text: "도구 예약 번호 바우처 모음", tab: "tools" },
+      { text: "도구 체크리스트 준비물", tab: "tools" },
+      { text: "도구 가계부 환율 지출", tab: "tools" },
+      { text: "지도 핀 경로 이동수단 일정 지도", tab: "map" },
+      { text: "항공편 KE921 인천 ➔ 리스본 11/8 12:00 ➔ 18:45", tab: "home" },
+      { text: "항공편 FR5467 포르투 ➔ 세비야 11/17 07:35", tab: "home" },
+      { text: "항공편 TP1103 세비야 ➔ 리스본 11/20 10:00 ➔ 10:05", tab: "home" },
+      { text: "항공편 KE922 리스본 ➔ 인천 11/20 21:40 (도착 11/21 20:00)", tab: "home" },
         { text: "소매치기 경보: 28번 트램, 로시우 광장, 백팩 앞으로, 스트랩", tab: "home" },
-        { text: "공항 우버 Kiss & Fly 2층 출국장 탑승 위치", tab: "survival" },
+        { text: "공항 우버 볼트 P2 탑승 위치 (입국장 북쪽 단기주차장)", tab: "survival" },
+      { text: "구간별 이동 가이드 호텔 공항 역 환승 지도 링크 메트로 택시 우버", tab: "survival" },
         { text: "AP 133 기차: 캄파냐에서 상벤투역 무료 로컬열차 환승", tab: "itinerary" },
         { text: "테일러 와이너리: 한국어 오디오 가이드, 20유로 3종 시음 + 4유로 올리브", tab: "docent" },
         { text: "클레리구스 종탑 & 스피리투스(Spiritus) 미디어아트 조명 쇼", tab: "docent" },
@@ -1445,6 +2610,8 @@
 
     // Initialize application
     window.onload = function() {
+      renderLegs();
+      renderToday();
       renderTimeline('all');
       renderNoWaitRestaurants('all');
     };
