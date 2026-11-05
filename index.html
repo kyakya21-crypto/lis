@@ -51,7 +51,7 @@
       border-radius: 9999px;
     }
     .safe-bottom {
-      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 120px);
+      padding-bottom: 28px;
     }
     .tap-highlight-transparent {
       -webkit-tap-highlight-color: transparent;
@@ -67,10 +67,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased select-none font-sans min-h-screen">
+<body class="bg-slate-100 text-slate-800 antialiased select-none font-sans" style="height:100vh;height:100dvh;overflow:hidden;">
 
   <!-- Mobile Frame Container (Optimal on mobile, centered card layout on desktop) -->
-  <div class="max-w-md mx-auto min-h-screen bg-slate-50 flex flex-col shadow-2xl relative border-x border-slate-200">
+  <div class="max-w-md mx-auto bg-slate-50 flex flex-col shadow-2xl relative border-x border-slate-200" style="height:100vh;height:100dvh;">
     
     <!-- Top Status / Header -->
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex items-center justify-between">
@@ -109,7 +109,7 @@
     </div>
 
     <!-- MAIN SCROLLABLE CONTENT AREA -->
-    <main class="flex-1 overflow-y-auto safe-bottom px-3.5 py-4 space-y-5" id="mainContent">
+    <main class="flex-1 min-h-0 overflow-y-auto safe-bottom px-3.5 py-4 space-y-5" id="mainContent" style="-webkit-overflow-scrolling:touch;">
       
       <!-- TAB 1: 🌟 QUICK CHEAT SHEET (Home) -->
       <section id="tab-home" class="tab-panel space-y-4">
@@ -885,7 +885,7 @@
     <!-- BOTTOM FIXED NAVIGATION BAR -->
     <div id="showOverlay" class="hidden fixed inset-0 z-50 bg-white p-5 overflow-y-auto"></div>
 
-    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 z-40 px-2 pt-1.5 flex justify-around items-center shadow-lg" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 6px);">
+    <nav class="relative shrink-0 bg-white border-t border-slate-200 z-40 px-2 pt-1.5 flex justify-around items-center shadow-lg" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 6px);">
       <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center py-1 px-1 text-azulejo-600 transition tap-highlight-transparent">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
         <span class="text-[10px] font-bold mt-0.5">치트키</span>
@@ -1349,21 +1349,21 @@
           { id: 'casa_fado', t: '저녁', d: 'A Casa do Fado에서 어쿠스틱 파두 라이브 (예약 권장).', leg: { mode: 'walk' } },
           { id: 'porto_apt', t: '밤', d: '숙소 복귀.', leg: { mode: 'walk' } }
         ] },
-      { day: 6, date: '11/13 (금)', city: 'porto', title: '가이아 와이너리',
+      { day: 6, date: '11/13 (금)', city: 'porto', title: '브라가·기마랑이스 투어 & 가이아 와이너리',
+        pre: [{ i: '🚐', t: '11/14에서 옮긴 전용 투어입니다. 예약 바우처의 픽업 시각·장소를 먼저 확인하세요. 투어 후 와이너리는 시간이 맞을 때만 가세요.' }],
         seq: [
-          { id: 'porto_apt', t: '오후', d: '숙소 출발.' },
-          { id: 'taylors', t: '오후', d: "테일러 와이너리: 한국어 오디오 가이드 투어, 포트와인 3종 시음.",
+          { id: 'porto_apt', t: '아침', d: '숙소 출발 (투어 픽업 장소 확인).' },
+          { id: 'braga_bom', t: '오전', d: '봉 제주스 성당의 바로크 지그재그 순례 계단과 감각의 분수 관람.', leg: { mode: 'van', t: '약 1시간', note: '포르투 ➔ 브라가 약 55km (추정).' } },
+          { id: 'guimaraes', t: '오후', d: '기마랑이스 성과 중세 구시가지 탐방.', leg: { mode: 'van', t: '약 30분', note: '브라가 ➔ 기마랑이스 약 25km (추정).' } },
+          { id: 'sao_bento', t: '저녁', d: '포르투 복귀 후 상벤투 인근에서 저녁.', leg: { mode: 'van', t: '약 1시간', note: '기마랑이스 ➔ 포르투 약 55km (추정).' } },
+          { id: 'taylors', t: '투어 후', d: "테일러 와이너리: 한국어 오디오 가이드 투어, 포트와인 3종 시음 (영업시간 확인 필요).",
             leg: { mode: 'walk', via: [W.bridgeLuis], note: '동 루이스 1세 다리를 건너 가이아 언덕을 올라요.',
               alts: [{ mode: 'car', t: '약 10분', c: '대략 5~8€', note: '오르막이 힘들 때 편해요.' }] } },
           { id: 'porto_apt', t: '저녁', d: '숙소 복귀.', leg: { mode: 'car', t: '약 10분', c: '대략 5~8€', note: '시음 뒤에는 우버·볼트를 추천해요.' } }
         ] },
-      { day: 7, date: '11/14 (토)', city: 'porto', title: '브라가 & 기마랑이스',
-        pre: [{ i: '🚐', t: '전용 투어입니다. 예약 바우처의 픽업 시각·장소를 확인하세요.' }],
+      { day: 7, date: '11/14 (토)', city: 'porto', title: '자유 시간 (투어는 11/13으로 이동)',
         seq: [
-          { id: 'porto_apt', t: '아침', d: '숙소 출발.' },
-          { id: 'braga_bom', t: '오전', d: '봉 제주스 성당의 바로크 지그재그 계단과 감각의 분수.', leg: { mode: 'van', t: '약 1시간', note: '포르투 ➔ 브라가 약 55km (추정).' } },
-          { id: 'guimaraes', t: '오후', d: '기마랑이스 성과 중세 구시가지.', leg: { mode: 'van', t: '약 30분', note: '브라가 ➔ 기마랑이스 약 25km (추정).' } },
-          { id: 'sao_bento', t: '저녁', d: '포르투 복귀 후 상벤투 인근 타파스 바에서 저녁.', leg: { mode: 'van', t: '약 1시간', note: '기마랑이스 ➔ 포르투 약 55km (추정).' } }
+          { id: 'ribeira', t: '하루', d: '특별 일정 없이 히베이라 산책, 쇼핑, 카페. 쉬어 가는 날로 두세요.', leg: { mode: 'walk' } }
         ] },
       { day: 8, date: '11/15 (일)', city: 'porto', title: '클래식 건축 & 스피리투스',
         seq: [
@@ -1716,7 +1716,7 @@
       { id: 'c15', due: '2026-11-11', g: '11/11 리스본 ➔ 포르투', t: '12:00 체크아웃, 짐 프런트 보관 요청' },
       { id: 'c16', due: '2026-11-11', g: '11/11 리스본 ➔ 포르투', t: '13:00 호텔 출발 ➔ 13:30까지 산타 아폴로니아역 도착 (AP 133, 14:00)' },
       { id: 'c17', due: '2026-11-11', g: '11/11 리스본 ➔ 포르투', t: '캄파냐역에서 Urbano(상벤투 행)로 환승, AP 티켓으로 무료' },
-      { id: 'c18', due: '2026-11-13', g: '11/14 투어', t: '브라가·기마랑이스 투어 픽업 바우처 시각·장소 확인' },
+      { id: 'c18', due: '2026-11-12', g: '11/13 투어', t: '브라가·기마랑이스 투어 픽업 바우처 시각·장소 확인 (11/13으로 변경)' },
       { id: 'c19', due: '2026-11-15', g: '11/16~17 새벽 이동', t: '새벽 출발이라 열쇠 반납·체크아웃 방법을 호스트에게 확인' },
       { id: 'c20', due: '2026-11-16', g: '11/16~17 새벽 이동', t: '라이언에어 모바일 탑승권 저장 (온라인 체크인)' },
       { id: 'c21', due: '2026-11-16', g: '11/16~17 새벽 이동', t: '세비야 호텔에 오전 도착(09:50)·짐 보관 요청 메시지' },
@@ -2059,11 +2059,12 @@
         day: 6,
         date: "11/13 (금)",
         city: "porto",
-        title: "가이아 언덕 테일러 와이너리 집중 투어",
+        title: "브라가·기마랑이스 투어 & 가이아 와이너리",
         hotel: "HM Infante Riverside Apt (히베이라, Rua do Infante Dom Henrique 45)",
         badge: "포르투 3일차",
         timeline: [
-          { time: "오후", desc: "도우로강을 건너 빌라 노바 드 가이아(Gaia) 언덕으로 이동 ➔ 테일러 와이너리(Taylor's) 방문." },
+          { time: "종일", desc: "브라가·기마랑이스 전용 투어 (11/14에서 이동). 픽업 시각과 장소는 바우처에서 확인하세요." },
+          { time: "투어 후", desc: "도우로강을 건너 빌라 노바 드 가이아(Gaia) 언덕으로 이동 ➔ 테일러 와이너리(Taylor's) 방문. 투어가 늦게 끝나면 생략하거나 다른 날로 옮기세요." },
           { time: "투어", desc: "한국어 오디오 가이드로 포트와인 오크통 양조장 탐방 ➔ 대형 오크통 셀피 머신 사진 촬영." },
           { time: "시음", desc: "포도밭 정원에서 포트와인 3종 시음 + 4유로 올리브 안주 조합 ➔ 기념품숍 '생빈(생일 빈티지)' 와인 탐색." }
         ],
@@ -2073,15 +2074,13 @@
         day: 7,
         date: "11/14 (토)",
         city: "porto",
-        title: "전용 투어: 브라가 & 기마랑이스 일일 역사 투어",
+        title: "자유 시간 (투어는 11/13으로 이동)",
         hotel: "HM Infante Riverside Apt (히베이라, Rua do Infante Dom Henrique 45)",
-        badge: "포르투 4일차 (근교)",
+        badge: "포르투 4일차 (자유)",
         timeline: [
-          { time: "오전", desc: "포르투갈의 종교 수도 브라가(Braga) 이동 ➔ 봉 제주스 성당의 바로크 지그재그 순례 계단과 감각의 분수 관람." },
-          { time: "오후", desc: "포르투갈 건국 초대 왕의 요람 기마랑이스(Guimarães) 성과 중세 구시가지 탐방." },
-          { time: "저녁", desc: "포르투 복귀 후 상벤투 인근 타파스 바에서 편안한 저녁 식사." }
+          { time: "하루", desc: "특별 일정 없이 포르투 자유 산책, 쇼핑, 카페. 11/20 이동 전에 쉬어 가는 날로 두세요." }
         ],
-        docentNote: "개인 수신기용 이어폰을 꼭 지참하세요. 돌바닥 성곽이므로 편한 운동화 필수입니다."
+        docentNote: "비워둔 날이라 날씨 보고 가고 싶은 곳을 골라 가세요."
       },
       {
         day: 8,
